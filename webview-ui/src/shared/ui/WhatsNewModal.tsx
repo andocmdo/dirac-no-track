@@ -150,7 +150,7 @@ export const WhatsNewModal: React.FC<WhatsNewModalProps> = ({ open, onClose, ver
 						<p className="text-sm text-center" style={{ color: "var(--vscode-descriptionForeground)" }}>
 							Please support Dirac by{" "}
 							<a
-								href="https://github.com/dirac/dirac"
+								href="https://github.com/dirac-run/dirac"
 								rel="noopener noreferrer"
 								style={{ color: "var(--vscode-textLink-foreground)" }}
 								target="_blank">
