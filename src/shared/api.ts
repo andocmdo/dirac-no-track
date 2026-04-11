@@ -255,16 +255,6 @@ export const anthropicModels = {
 export type ClaudeCodeModelId = keyof typeof claudeCodeModels
 export const claudeCodeDefaultModelId: ClaudeCodeModelId = "claude-sonnet-4-6"
 export const claudeCodeModels = {
-	sonnet: {
-		...anthropicModels["claude-sonnet-4-6-20250929"],
-		supportsImages: false,
-		supportsPromptCache: false,
-	},
-	"sonnet[1m]": {
-		...anthropicModels["claude-sonnet-4-6-20250929:1m"],
-		supportsImages: false,
-		supportsPromptCache: false,
-	},
 	opus: {
 		...anthropicModels["claude-opus-4-6"],
 		supportsImages: false,
