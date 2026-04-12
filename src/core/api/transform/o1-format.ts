@@ -388,13 +388,16 @@ export function convertO1ResponseToAnthropicMessage(
 					return null
 			}
 		})(),
+		container: null,
+		stop_details: null,
+
 		stop_sequence: null, // which custom stop_sequence was generated, if any (not applicable if you don't use stop_sequence)
 		usage: {
 			input_tokens: completion.usage?.prompt_tokens || 0,
 			output_tokens: completion.usage?.completion_tokens || 0,
 			cache_creation_input_tokens: null,
 			cache_read_input_tokens: null,
-		},
+		} as any,
 	}
 
 	if (toolCalls.length > 0) {
@@ -405,6 +408,7 @@ export function convertO1ResponseToAnthropicMessage(
 					id: `call_${index}_${Date.now()}`, // Generate a unique ID for each tool call
 					name: toolCall.tool,
 					input: toolCall.tool_input,
+					caller: null as any,
 				}
 			}),
 		)

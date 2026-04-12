@@ -126,6 +126,9 @@ export function convertGeminiResponseToAnthropic(response: GenerateContentRespon
 		model: "",
 		stop_reason,
 		stop_sequence: null, // Gemini doesn't provide this information
+		container: null,
+		stop_details: null,
+
 		usage: {
 			input_tokens: response.usageMetadata?.promptTokenCount ?? 0,
 			output_tokens: response.usageMetadata?.candidatesTokenCount ?? 0,

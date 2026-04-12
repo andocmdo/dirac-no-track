@@ -198,7 +198,7 @@ export function convertToOpenAIResponsesInput(
 						const imageItem: any = {
 							type: "message",
 							role: "assistant",
-							content: [{ type: "output_text", text: `[image:${imageBlock.source.media_type}]` }],
+							content: [{ type: "output_text", text: `[image:${imageBlock.source.type === "base64" ? imageBlock.source.media_type : "url"}]` }],
 						}
 						// Set message-level id if available (though images typically don't have call_id)
 						if (imageBlock.call_id) {
@@ -247,7 +247,7 @@ export function convertToOpenAIResponsesInput(
 						messageContent.push({
 							type: "input_image",
 							detail: "auto",
-							image_url: `data:${imageBlock.source.media_type};base64,${imageBlock.source.data}`,
+							image_url: imageBlock.source.type === "base64" ? `data:${imageBlock.source.media_type};base64,${imageBlock.source.data}` : (imageBlock.source as any).url,
 						})
 						break
 					}

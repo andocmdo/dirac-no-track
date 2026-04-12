@@ -74,7 +74,7 @@ export function convertToVsCodeLmMessages(
 								: (toolMessage.content?.map((part) => {
 										if (part.type === "image") {
 											return new vscode.LanguageModelTextPart(
-												`[Image (${part.source?.type || "Unknown source-type"}): ${part.source?.media_type || "unknown media-type"} not supported by VSCode LM API]`,
+												`[Image (${part.source?.type || "Unknown source-type"}): ${part.source?.type === "base64" ? part.source.media_type : "url"} not supported by VSCode LM API]`,
 											)
 										}
 										return new vscode.LanguageModelTextPart(part.type === "text" ? part.text : "")
@@ -87,7 +87,7 @@ export function convertToVsCodeLmMessages(
 					...nonToolMessages.map((part) => {
 						if (part.type === "image") {
 							return new vscode.LanguageModelTextPart(
-								`[Image (${part.source?.type || "Unknown source-type"}): ${part.source?.media_type || "unknown media-type"} not supported by VSCode LM API]`,
+								`[Image (${part.source?.type || "Unknown source-type"}): ${part.source?.type === "base64" ? part.source.media_type : "url"} not supported by VSCode LM API]`,
 							)
 						}
 						return new vscode.LanguageModelTextPart(part.text)
@@ -186,13 +186,17 @@ export function convertToAnthropicMessage(vsCodeLmMessage: vscode.LanguageModelC
 						id: part.callId || crypto.randomUUID(),
 						name: part.name,
 						input: asObjectSafe(part.input),
-					}
+							caller: null as any,
+						}
 				}
 
 				return null
 			})
 			.filter((part): part is Anthropic.ContentBlock => part !== null),
 		stop_reason: null,
+		container: null,
+		stop_details: null,
+
 		stop_sequence: null,
 		usage: {
 			input_tokens: 0,

@@ -46,7 +46,7 @@ export function convertToOllamaMessages(anthropicMessages: Omit<DiracStorageMess
 							toolMessage.content
 								?.map((part) => {
 									if (part.type === "image") {
-										toolResultImages.push(`data:${part.source.media_type};base64,${part.source.data}`)
+										toolResultImages.push(part.source.type === "base64" ? `data:${part.source.media_type};base64,${part.source.data}` : (part.source as any).url)
 										return "(see following user message for image)"
 									}
 									return part.type === "text" ? part.text : ""
@@ -70,7 +70,7 @@ export function convertToOllamaMessages(anthropicMessages: Omit<DiracStorageMess
 						content: nonToolMessages
 							.map((part) => {
 								if (part.type === "image") {
-									return `data:${part.source.media_type};base64,${part.source.data}`
+									return part.source.type === "base64" ? `data:${part.source.media_type};base64,${part.source.data}` : (part.source as any).url
 								}
 								return part.type === "text" ? part.text : ""
 							})

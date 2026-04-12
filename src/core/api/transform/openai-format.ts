@@ -129,7 +129,7 @@ export function convertToOpenAiMessages(
 						content: toolResultImages.map((part) => ({
 							type: "image_url",
 							image_url: {
-								url: `data:${part.source.media_type};base64,${part.source.data}`,
+								url: part.source.type === "base64" ? `data:${part.source.media_type};base64,${part.source.data}` : (part.source as any).url,
 							},
 						})),
 					})
@@ -144,7 +144,7 @@ export function convertToOpenAiMessages(
 								return {
 									type: "image_url",
 									image_url: {
-										url: `data:${part.source.media_type};base64,${part.source.data}`,
+										url: part.source.type === "base64" ? `data:${part.source.media_type};base64,${part.source.data}` : (part.source as any).url,
 									},
 								}
 							}
@@ -381,6 +381,9 @@ export function convertToAnthropicMessage(completion: OpenAI.Chat.Completions.Ch
 					return null
 			}
 		})(),
+		container: null,
+		stop_details: null,
+
 		stop_sequence: null,
 		usage: {
 			input_tokens: completion.usage?.prompt_tokens || 0,
@@ -411,6 +414,7 @@ export function convertToAnthropicMessage(completion: OpenAI.Chat.Completions.Ch
 							id: toolCall.id,
 							name: toolCall.function?.name || UNIQUE_ERROR_TOOL_NAME,
 							input: parsedInput,
+							caller: null as any,
 						}
 					}),
 				)
