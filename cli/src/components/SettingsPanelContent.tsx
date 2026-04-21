@@ -96,12 +96,6 @@ const FEATURE_SETTINGS = {
 		label: "Strict plan mode",
 		description: "Require explicit mode switching",
 	},
-	nativeToolCall: {
-		stateKey: "nativeToolCallEnabled",
-		default: true,
-		label: "Native tool call",
-		description: "Use model's native tool calling API",
-	},
 	parallelToolCalling: {
 		stateKey: "enableParallelToolCalling",
 		default: false,

@@ -73,7 +73,7 @@ function createConfig(options?: {
 		focusChainSettings: {},
 		services: {
 			stateManager: {
-				getGlobalStateKey: (key: string) => (key === "nativeToolCallEnabled" ? true : undefined),
+				getGlobalStateKey: (_key: string) => undefined,
 				getGlobalSettingsKey: (key: string) => {
 					if (key === "mode") {
 						return "act"

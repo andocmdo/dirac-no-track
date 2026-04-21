@@ -25,6 +25,7 @@ import { CLI_LOG_FILE, shutdownEvent, window } from "./vscode-shim"
 interface TaskOptions {
 	act?: boolean
 	plan?: boolean
+	provider?: string
 	kanban?: boolean
 	model?: string
 	verbose?: boolean
@@ -95,6 +96,19 @@ async function normalizeReasoningEffort(value?: string): Promise<OpenaiReasoning
 	return "medium"
 }
 
+async function validate_provider(provider: string): Promise<void> {
+	const { ALL_MODEL_MAPS, ALL_PROVIDERS } = await import("@shared/api")
+	const { printError } = await import("./utils/display")
+	const { exit } = await import("node:process")
+
+	const validProviders = ALL_PROVIDERS || Array.from(new Set(ALL_MODEL_MAPS.map(([p]) => p)))
+	if (!validProviders.includes(provider as any)) {
+		printError(`Invalid provider '${provider}'. Valid providers: ${validProviders.sort().join(", ")}`)
+		exit(1)
+	}
+}
+
+
 async function normalizeMaxConsecutiveMistakes(value?: string): Promise<number | undefined> {
 	if (value === undefined) {
 		return undefined
@@ -110,15 +124,12 @@ async function normalizeMaxConsecutiveMistakes(value?: string): Promise<number |
 	return parsed
 }
 
-/**
- * Apply task-related options (mode, model, thinking, yolo) to StateManager.
- * Shared between runTask and resumeTask to avoid duplication.
- */
 async function applyTaskOptions(options: TaskOptions): Promise<void> {
 	const { StateManager } = await import("@/core/storage/StateManager")
 	const { telemetryService } = await import("@/services/telemetry")
 	const { getProviderModelIdKey } = await import("@/shared/storage")
-	const { printWarning } = await import("./utils/display")
+	const { printWarning, printError, printInfo } = await import("./utils/display")
+	const { exit } = await import("node:process")
 
 	const stateManager = StateManager.get()
 
@@ -131,18 +142,42 @@ async function applyTaskOptions(options: TaskOptions): Promise<void> {
 		telemetryService.captureHostEvent("mode_flag", "act")
 	}
 
+	// Validate provider/model combination
+	if (options.provider && !options.model) {
+		printError("Error: --provider requires --model to be specified.")
+		exit(1)
+	}
+
 	// Apply model override if specified
 	if (options.model) {
 		const currentMode = (stateManager.getGlobalSettingsKey("mode") || "act") as "act" | "plan"
+		const providerKey = currentMode === "act" ? "actModeApiProvider" : "planModeApiProvider"
+		const currentProvider = stateManager.getGlobalSettingsKey(providerKey) as ApiProvider
+
+		let targetProvider = options.provider as ApiProvider | undefined
+
+		if (options.provider) {
+			await validate_provider(options.provider)
+		}
+
+		if (!targetProvider) {
+			targetProvider = currentProvider
+		} else if (targetProvider !== currentProvider) {
+			stateManager.setSessionOverride(providerKey, targetProvider)
+		}
+
 		await setModeScopedState(currentMode, (mode) => {
-			const providerKey = mode === "act" ? "actModeApiProvider" : "planModeApiProvider"
-			const currentProvider = stateManager.getGlobalSettingsKey(providerKey) as ApiProvider
-			const modelKey = getProviderModelIdKey(currentProvider, mode)
+			const pKey = mode === "act" ? "actModeApiProvider" : "planModeApiProvider"
+			const p = stateManager.getGlobalSettingsKey(pKey) as ApiProvider
+			const modelKey = getProviderModelIdKey(p, mode)
 			if (modelKey) {
 				stateManager.setSessionOverride(modelKey, options.model!)
 			}
 		})
 		telemetryService.captureHostEvent("model_flag", options.model)
+		if (options.provider) {
+			telemetryService.captureHostEvent("provider_flag", options.provider)
+		}
 	}
 
 	const currentMode = (stateManager.getGlobalSettingsKey("mode") || "act") as "act" | "plan"
@@ -941,6 +976,7 @@ program
 	.option("--auto-approve-all", "Enable auto-approve all actions while keeping interactive mode")
 	.option("-t, --timeout <seconds>", "Optional timeout in seconds (applies only when provided)")
 	.option("-m, --model <model>", "Model to use for the task")
+	.option("--provider <provider>", "API provider to use (requires --model)")
 	.option("-v, --verbose", "Show verbose output")
 	.option("-c, --cwd <path>", "Working directory for the task")
 	.option("--config <path>", "Path to Dirac configuration directory")
@@ -1163,6 +1199,7 @@ program
 	.option("--auto-approve-all", "Enable auto-approve all actions while keeping interactive mode")
 	.option("-t, --timeout <seconds>", "Optional timeout in seconds (applies only when provided)")
 	.option("-m, --model <model>", "Model to use for the task")
+	.option("--provider <provider>", "API provider to use (requires --model)")
 	.option("-v, --verbose", "Show verbose output")
 	.option("-c, --cwd <path>", "Working directory")
 	.option("--config <path>", "Configuration directory")

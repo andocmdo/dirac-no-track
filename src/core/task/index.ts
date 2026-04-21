@@ -68,7 +68,6 @@ import {
 	DiracUserContent,
 } from "@shared/messages/content"
 import { DiracMessageModelInfo } from "@shared/messages/metrics"
-import { ApiFormat } from "@shared/proto/dirac/models"
 import { ShowMessageType } from "@shared/proto/index.host"
 import { convertDiracMessageToProto } from "@shared/proto-conversions/dirac-message"
 import { Logger } from "@shared/services/Logger"
@@ -986,9 +985,6 @@ export class Task {
 			workspaceRoots,
 			isSubagentRun: false,
 			isCliEnvironment,
-			enableNativeToolCalls:
-				providerInfo.model.info.apiFormat === ApiFormat.OPENAI_RESPONSES ||
-				this.stateManager.getGlobalStateKey("nativeToolCallEnabled"),
 			enableParallelToolCalling: this.isParallelToolCallingEnabled(),
 			terminalExecutionMode: this.terminalExecutionMode,
 			activeShellType: shellInfo.type,
@@ -1140,6 +1136,7 @@ ${notice}`
 						messageStateHandler: this.messageStateHandler,
 						lastApiReqIndex: lastApiReqStartedIndex,
 						inputTokens: 0,
+						reasoningTokens: 0,
 						outputTokens: 0,
 						cacheWriteTokens: 0,
 						cacheReadTokens: 0,
@@ -1292,7 +1289,8 @@ ${notice}`
 				inputTokens: number
 				outputTokens: number
 				totalCost: number | undefined
-			} = { cacheWriteTokens: 0, cacheReadTokens: 0, inputTokens: 0, outputTokens: 0, totalCost: undefined }
+				reasoningTokens: number
+			} = { cacheWriteTokens: 0, cacheReadTokens: 0, inputTokens: 0, outputTokens: 0, reasoningTokens: 0, totalCost: undefined }
 			let didFinalizeApiReqMsg = false
 			let usageChunkSideEffectsQueue = Promise.resolve()
 
@@ -1313,6 +1311,7 @@ ${notice}`
 					lastApiReqIndex,
 					inputTokens: taskMetrics.inputTokens,
 					outputTokens: taskMetrics.outputTokens,
+					reasoningTokens: taskMetrics.reasoningTokens,
 					cacheWriteTokens: taskMetrics.cacheWriteTokens,
 					cacheReadTokens: taskMetrics.cacheReadTokens,
 					api: this.api,
@@ -1472,6 +1471,7 @@ ${notice}`
 						didReceiveUsageChunk = true
 						taskMetrics.inputTokens += chunk.inputTokens
 						taskMetrics.outputTokens += chunk.outputTokens
+						taskMetrics.reasoningTokens += chunk.reasoningTokens ?? chunk.thoughtsTokenCount ?? 0
 						taskMetrics.cacheWriteTokens += chunk.cacheWriteTokens ?? 0
 						taskMetrics.cacheReadTokens += chunk.cacheReadTokens ?? 0
 						taskMetrics.totalCost = chunk.totalCost ?? taskMetrics.totalCost
@@ -1654,6 +1654,7 @@ ${notice}`
 					taskMetrics.outputTokens += apiStreamUsage.outputTokens
 					taskMetrics.cacheWriteTokens += apiStreamUsage.cacheWriteTokens ?? 0
 					taskMetrics.cacheReadTokens += apiStreamUsage.cacheReadTokens ?? 0
+					taskMetrics.reasoningTokens += (apiStreamUsage as any).reasoningTokens ?? (apiStreamUsage as any).thoughtsTokenCount ?? 0
 					taskMetrics.totalCost = apiStreamUsage.totalCost ?? taskMetrics.totalCost
 					queueUsageChunkSideEffects(apiStreamUsage.inputTokens, apiStreamUsage.outputTokens, {
 						cacheWriteTokens: apiStreamUsage.cacheWriteTokens,

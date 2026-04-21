@@ -16,7 +16,7 @@ export * from "./types"
 export async function getSystemPrompt(context: SystemPromptContext) {
 	const registry = PromptRegistry.getInstance()
 	const systemPrompt = await registry.get(context)
-	const tools = context.enableNativeToolCalls ? registry.nativeTools : undefined
+	const tools = registry.nativeTools
 
 	Logger.log(`[DEBUG] System prompt char length: ${systemPrompt.length}`)
 

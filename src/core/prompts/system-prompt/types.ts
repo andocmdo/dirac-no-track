@@ -44,7 +44,6 @@ export interface SystemPromptContext {
 	readonly isCliSubagent?: boolean
 	readonly isSubagentRun?: boolean
 	readonly isCliEnvironment?: boolean
-	readonly enableNativeToolCalls?: boolean
 	readonly enableParallelToolCalling?: boolean
 	readonly terminalExecutionMode?: "vscodeTerminal" | "backgroundExec"
 	readonly activeShellType?: ShellType

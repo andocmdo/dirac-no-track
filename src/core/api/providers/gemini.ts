@@ -171,7 +171,7 @@ export class GeminiHandler implements ApiHandler {
 			// Add base URL if configured
 			httpOptions: this.options.geminiBaseUrl ? { baseUrl: this.options.geminiBaseUrl } : undefined,
 			systemInstruction: systemPrompt,
-			temperature: info.temperature ?? 0.0,
+			temperature: info.temperature ?? 0.3,
 			topP: 0.8,
 			...(maxOutputTokens !== undefined ? { maxOutputTokens } : {}),
 		}
@@ -341,7 +341,7 @@ export class GeminiHandler implements ApiHandler {
 					type: "usage",
 					inputTokens: promptTokens - cacheReadTokens,
 					outputTokens,
-					thoughtsTokenCount,
+					reasoningTokens: thoughtsTokenCount,
 					cacheReadTokens,
 					cacheWriteTokens: 0,
 					totalCost,

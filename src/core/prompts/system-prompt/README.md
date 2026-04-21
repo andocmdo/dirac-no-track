@@ -79,7 +79,7 @@ Dirac uses a modular, multi-stage pipeline to generate the final system prompt. 
     - Global rules are loaded from the user's global `.clinerules/` directory.
     - Local project rules are loaded from the workspace (supporting `.clinerules`, `.cursorrules`, etc.) and injected into the `USER'S CUSTOM INSTRUCTIONS` section.
 5.  **Native Tool Generation**:
-    - If the provider and model support native tool calling (checked via `isNativeToolCallingConfig` in `src/utils/model-utils.ts`), `src/core/prompts/system-prompt/registry/DiracToolSet.ts` converts all enabled tools into the provider's native format.
+    - `src/core/prompts/system-prompt/registry/DiracToolSet.ts` converts all enabled tools into the provider's native format.
     - **Important**: In this mode, the system prompt string itself does **not** contain tool definitions, as the provider receives them as a separate structured parameter.
 6.  **Final Output**: The `systemPrompt` string and `tools` array are returned to the `Task` runner, which then passes them to the API via `src/core/api/index.ts`.
 

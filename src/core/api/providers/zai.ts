@@ -1,11 +1,11 @@
 import {
-    internationalZAiDefaultModelId,
-    internationalZAiModelId,
-    internationalZAiModels,
-    ModelInfo,
-    mainlandZAiDefaultModelId,
-    mainlandZAiModelId,
-    mainlandZAiModels,
+	internationalZAiDefaultModelId,
+	internationalZAiModelId,
+	internationalZAiModels,
+	ModelInfo,
+	mainlandZAiDefaultModelId,
+	mainlandZAiModelId,
+	mainlandZAiModels,
 } from "@shared/api"
 import OpenAI from "openai"
 import type { ChatCompletionTool as OpenAITool } from "openai/resources/chat/completions"
@@ -17,11 +17,14 @@ import { withRetry } from "../retry"
 import { convertToOpenAiMessages } from "../transform/openai-format"
 import { ApiStream } from "../transform/stream"
 import { getOpenAIToolParams, ToolCallProcessor } from "../transform/tool-call-processor"
+import { Logger } from "@/shared/services/Logger"
+
 
 interface ZAiHandlerOptions extends CommonApiHandlerOptions {
 	zaiApiLine?: string
 	zaiApiKey?: string
 	apiModelId?: string
+	thinkingBudgetTokens?: number
 }
 
 export class ZAiHandler implements ApiHandler {
@@ -82,23 +85,45 @@ export class ZAiHandler implements ApiHandler {
 			{ role: "system", content: systemPrompt },
 			...convertToOpenAiMessages(messages),
 		]
-		const stream = await client.chat.completions.create({
+
+		const thinkingBudgetTokens = this.options.thinkingBudgetTokens || 0
+
+		const stream = (await client.chat.completions.create({
 			model: model.id,
-			max_completion_tokens: model.info.maxTokens,
+			max_tokens: model.info.maxTokens,
 			messages: openAiMessages,
+			temperature: 0,
 			stream: true,
 			stream_options: { include_usage: true },
+			...(thinkingBudgetTokens > 0
+				? {
+						thinking: {
+							type: "enabled",
+						},
+				  }
+				: {}),
+			tool_stream: true,
 			...getOpenAIToolParams(tools),
-		})
+		} as any)) as unknown as AsyncIterable<OpenAI.Chat.ChatCompletionChunk>
 
 		const toolCallProcessor = new ToolCallProcessor()
 
 		for await (const chunk of stream) {
+			
+
 			const delta = chunk.choices?.[0]?.delta
+			Logger.info("ZAI chunk", delta)
 			if (delta?.content) {
 				yield {
 					type: "text",
 					text: delta.content,
+				}
+			}
+
+			if (delta && "reasoning_content" in delta && delta.reasoning_content) {
+				yield {
+					type: "reasoning",
+					reasoning: (delta.reasoning_content as string | undefined) || "",
 				}
 			}
 
@@ -113,6 +138,7 @@ export class ZAiHandler implements ApiHandler {
 					outputTokens: chunk.usage.completion_tokens || 0,
 					cacheReadTokens: chunk.usage.prompt_tokens_details?.cached_tokens || 0,
 					cacheWriteTokens: 0,
+					reasoningTokens: (chunk.usage as any).completion_tokens_details?.reasoning_tokens || 0,
 				}
 			}
 		}

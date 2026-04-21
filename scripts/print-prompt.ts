@@ -14,7 +14,6 @@ async function main() {
 		} as any,
 		cwd: "/home/user/project",
 		isTesting: true,
-		enableNativeToolCalls: false,
 	})
 
 	console.log("=== SYSTEM PROMPT ===")

@@ -3,6 +3,7 @@ import { execSync } from "child_process"
 import { showSystemNotification } from "@/integrations/notifications"
 import { DiracApiReqCancelReason, DiracApiReqInfo } from "@/shared/ExtensionMessage"
 import { calculateApiCostAnthropic } from "@/utils/cost"
+import { calculateApiCostOpenAI, calculateApiCostQwen } from "@/utils/cost"
 import { MessageStateHandler } from "./message-state"
 
 export const showNotificationForApproval = (message: string, notificationsEnabled: boolean) => {
@@ -18,6 +19,7 @@ type UpdateApiReqMsgParams = {
 	messageStateHandler: MessageStateHandler
 	lastApiReqIndex: number
 	inputTokens: number
+	reasoningTokens: number
 	outputTokens: number
 	cacheWriteTokens: number
 	cacheReadTokens: number
@@ -42,17 +44,46 @@ export const updateApiReqMsg = async (params: UpdateApiReqMsgParams) => {
 			...currentApiReqInfo, // Spread the modified info (with retryStatus removed)
 			tokensIn: params.inputTokens,
 			tokensOut: params.outputTokens,
+			reasoningTokens: params.reasoningTokens,
 			cacheWrites: params.cacheWriteTokens,
 			cacheReads: params.cacheReadTokens,
 			cost:
 				params.totalCost ??
-				calculateApiCostAnthropic(
-					params.api.getModel().info,
-					params.inputTokens,
-					params.outputTokens,
-					params.cacheWriteTokens,
-					params.cacheReadTokens,
-				),
+				(() => {
+					const info = params.api.getModel().info
+					const provider = params.api.constructor.name
+					if (provider === "ZAiHandler" || provider === "OpenAiHandler" || provider === "DeepSeekHandler") {
+						return calculateApiCostOpenAI(
+							info,
+							params.inputTokens,
+							params.outputTokens,
+							params.cacheWriteTokens,
+							params.cacheReadTokens,
+							undefined,
+							params.reasoningTokens,
+						)
+					}
+					if (provider === "QwenHandler") {
+						return calculateApiCostQwen(
+							info,
+							params.inputTokens,
+							params.outputTokens,
+							params.cacheWriteTokens,
+							params.cacheReadTokens,
+							undefined,
+							params.reasoningTokens,
+						)
+					}
+					return calculateApiCostAnthropic(
+						info,
+						params.inputTokens,
+						params.outputTokens,
+						params.cacheWriteTokens,
+						params.cacheReadTokens,
+						undefined,
+						params.reasoningTokens,
+					)
+				})(),
 			cancelReason: params.cancelReason,
 			streamingFailedMessage: params.streamingFailedMessage,
 			contextWindow: params.contextWindow,

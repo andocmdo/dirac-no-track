@@ -15,7 +15,6 @@ import { checkContextWindowExceededError } from "@/core/context/context-manageme
 import { getContextWindowInfo } from "@/core/context/context-management/context-window-utils"
 import { HostRegistryInfo } from "@/registry"
 import { DiracError, DiracErrorType } from "@/services/error"
-import { ApiFormat } from "@/shared/proto/dirac/models"
 import { calculateApiCostAnthropic } from "@/utils/cost"
 import { TaskState } from "../../TaskState"
 import { ToolExecutorCoordinator } from "../ToolExecutorCoordinator"
@@ -342,9 +341,6 @@ export class SubagentRunner {
 				customPrompt: this.baseConfig.services.stateManager.getGlobalSettingsKey("customPrompt"),
 			}
 			stats.contextWindow = providerInfo.model.info.contextWindow || 0
-			const nativeToolCallsRequested =
-				providerInfo.model.info.apiFormat === ApiFormat.OPENAI_RESPONSES ||
-				!!this.baseConfig.services.stateManager.getGlobalStateKey("nativeToolCallEnabled")
 
 			const host = HostRegistryInfo.get()
 			const discoveredSkills = await discoverSkills(this.baseConfig.cwd)
@@ -370,7 +366,6 @@ export class SubagentRunner {
 				skills,
 				browserSettings: this.baseConfig.browserSettings,
 				yoloModeToggled: false,
-				enableNativeToolCalls: nativeToolCallsRequested,
 				enableParallelToolCalling: false,
 				isSubagentRun: true,
 				isMultiRootEnabled: this.baseConfig.isMultiRootEnabled,
@@ -394,7 +389,7 @@ export class SubagentRunner {
 				}
 				systemPrompt += `\n\n# Execution Limits\nYou must complete your task and call attempt_completion within ${limits.join(" and ")}.`
 			}
-			const useNativeToolCalls = !!promptRegistry.nativeTools?.length
+			const useNativeToolCalls = true
 			const nativeTools = useNativeToolCalls ? this.agent.buildNativeTools(context) : undefined
 			const workspaceMetadataEnvironmentBlock = await this.getWorkspaceMetadataEnvironmentBlock()
 

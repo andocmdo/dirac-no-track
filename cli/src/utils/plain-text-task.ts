@@ -235,7 +235,7 @@ export async function runPlainTextTask(options: PlainTextTaskOptions): Promise<b
 			process.stderr.write(`\n${"-".repeat(40)}\n`)
 			process.stderr.write(`Task Summary:\n`)
 			process.stderr.write(
-				`Tokens: ${metrics.totalTokensIn.toLocaleString()} in, ${metrics.totalTokensOut.toLocaleString()} out\n`,
+				`Tokens: ${metrics.totalTokensIn.toLocaleString()} in, ${metrics.totalTokensOut.toLocaleString()} out${metrics.totalReasoningTokens ? ` (+${metrics.totalReasoningTokens.toLocaleString()} thinking)` : ""}\n`
 			)
 			if (metrics.totalCacheReads || metrics.totalCacheWrites) {
 				process.stderr.write(
@@ -285,11 +285,11 @@ function handleMessageForPipeMode(
 				try {
 					const info = JSON.parse(fullText || "{}")
 					const hasMetrics = info.cost !== undefined || info.tokensIn !== undefined
-					if (hasMetrics || !isUpdate) {
+					if (hasMetrics) {
 						const costStr = info.cost !== undefined ? `Cost: $${info.cost.toFixed(4)}` : ""
 						const tokensStr =
 							info.tokensIn !== undefined
-								? `Tokens: ${info.tokensIn.toLocaleString()} in, ${info.tokensOut.toLocaleString()} out`
+								? `Tokens: ${info.tokensIn.toLocaleString()} in, ${info.tokensOut.toLocaleString()} out${info.reasoningTokens ? ` (+${info.reasoningTokens.toLocaleString()} thinking)` : ""}`
 								: ""
 						const cacheStr =
 							info.cacheReads !== undefined || info.cacheWrites !== undefined

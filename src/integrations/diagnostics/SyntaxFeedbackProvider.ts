@@ -35,13 +35,11 @@ export class SyntaxFeedbackProvider implements IDiagnosticsProvider {
 			}
 
 			if (!tree.rootNode.hasError) {
-				Logger.error(`[SyntaxFeedbackProvider] rootNode.hasError is false for ${filePath}`)
 				return { newProblemsMessage: "", fixedCount: 0 }
 			}
 
 			const errors = this.findErrors(tree.rootNode)
 			if (errors.length === 0) {
-				Logger.error(`[SyntaxFeedbackProvider] findErrors returned no results for ${filePath}`)
 				return { newProblemsMessage: "", fixedCount: 0 }
 			}
 

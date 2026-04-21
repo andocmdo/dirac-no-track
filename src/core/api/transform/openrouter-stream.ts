@@ -11,7 +11,6 @@ import {
 import { normalizeOpenaiReasoningEffort } from "@shared/storage/types"
 import {
 	GEMINI_MAX_OUTPUT_TOKENS,
-	isGeminiFlash,
 	shouldSkipReasoningForModel,
 	supportsReasoningEffortForModel,
 } from "@utils/model-utils"
@@ -182,9 +181,7 @@ export async function createOpenRouterStream(
 	const includeReasoning = !shouldSkipReasoningForModel(model.id) && reasoningEffortValue !== "none"
 	const reasoningPayload =
 		reasoning ?? (reasoningEffortValue && reasoningEffortValue !== "none" ? { effort: reasoningEffortValue } : undefined)
-	const maxTokens = isGeminiFlash(model.id)
-		? Math.min(model.info.maxTokens || GEMINI_MAX_OUTPUT_TOKENS, GEMINI_MAX_OUTPUT_TOKENS)
-		: undefined
+	const maxTokens = Math.min(model.info.maxTokens || GEMINI_MAX_OUTPUT_TOKENS, GEMINI_MAX_OUTPUT_TOKENS)
 
 	const requestPayload: Record<string, unknown> = {
 		model: model.id,

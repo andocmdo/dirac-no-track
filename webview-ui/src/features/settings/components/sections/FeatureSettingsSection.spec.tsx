@@ -16,7 +16,6 @@ vi.mock("@/features/settings/store/settingsStore", () => ({
 		worktreesEnabled: { user: true, featureFlag: true },
 		focusChainSettings: { enabled: false, remindDiracInterval: 6 },
 		remoteConfigSettings: {},
-		nativeToolCallSetting: false,
 		enableParallelToolCalling: false,
 		backgroundEditEnabled: false,
 		doubleCheckCompletionEnabled: false,

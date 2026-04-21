@@ -1,31 +1,13 @@
 import { ApiHandlerModel, ApiProviderInfo } from "@core/api"
-import { AnthropicModelId, anthropicModels } from "@/shared/api"
+import {
+	AnthropicModelId,
+	anthropicModels, getProviderForModel
+} from "@/shared/api"
 
 export { supportsReasoningEffortForModel } from "@shared/utils/reasoning-support"
 
 const CLAUDE_VERSION_MATCH_REGEX = /[-_ ]([\d](?:\.[05])?)[-_ ]?/
 export const GEMINI_MAX_OUTPUT_TOKENS = 32_768
-
-export function isNativeToolCallingProvider(providerInfo: ApiProviderInfo): boolean {
-	const providerId = normalize(providerInfo.providerId)
-	return [
-		"dirac",
-		"anthropic",
-		"bedrock",
-		"gemini",
-		"vertex",
-		"openrouter",
-		"openai",
-		"minimax",
-		"openai-native",
-		"openai-compatible",
-		"openai-codex",
-		"baseten",
-		"vercel-ai-gateway",
-		"deepseek",
-		"oca",
-	].some((id) => providerId === id)
-}
 
 export function modelDoesntSupportWebp(apiHandlerModel: ApiHandlerModel): boolean {
 	const modelId = apiHandlerModel.id.toLowerCase()
@@ -42,43 +24,16 @@ export function shouldSkipReasoningForModel(modelId?: string): boolean {
 	if (!modelId) {
 		return false
 	}
-	return modelId.includes("grok-4") || modelId.includes("devstral") || modelId.includes("glm")
+	const provider = getProviderForModel(modelId)
+	return provider === "xai" || modelId.includes("devstral")
 }
 
 export function isAnthropicModelId(modelId: string): modelId is AnthropicModelId {
-	const CLAUDE_MODELS = ["sonnet", "opus", "haiku"]
-	return modelId in anthropicModels || CLAUDE_MODELS.some((substring) => modelId.includes(substring))
-}
-
-export function isClaude4Plus(id: string): boolean {
-	const modelId = normalize(id)
-	// Claude Code short aliases are always Claude 4+
-	// These are used by ClaudeCodeHandler.getModel() when user selects "sonnet" or "opus"
-	// Check before isAnthropicModelId to avoid type guard narrowing issues
-	if (modelId === "sonnet" || modelId === "opus") {
+	if (getProviderForModel(modelId) === "anthropic") {
 		return true
 	}
-	if (!isAnthropicModelId(modelId)) {
-		return false
-	}
-	// Get model version number
-	const versionMatch = modelId.match(CLAUDE_VERSION_MATCH_REGEX)
-	if (!versionMatch) {
-		return false
-	}
-	const version = Number.parseFloat(versionMatch[1])
-	// Check if version is 4.0 or higher
-	return version >= 4
-}
-
-export function isGemini2dot5(id: string): boolean {
-	const modelId = normalize(id)
-	return modelId.includes("gemini-2.5")
-}
-
-export function isGrok4(id: string): boolean {
-	const modelId = normalize(id)
-	return modelId.includes("grok-4")
+	const CLAUDE_MODELS = ["sonnet", "opus", "haiku"]
+	return modelId in anthropicModels || CLAUDE_MODELS.some((substring) => modelId.includes(substring))
 }
 
 export function isGPT5(id: string): boolean {
@@ -86,88 +41,10 @@ export function isGPT5(id: string): boolean {
 	return modelId.includes("gpt-5") || modelId.includes("gpt5")
 }
 
-export function isGptOss(id: string): boolean {
-	const modelId = normalize(id)
-	return modelId.includes("gpt-oss") || modelId.includes("gpt_oss")
-}
 
 export function isGPT51(id: string): boolean {
 	const modelId = normalize(id)
 	return modelId.includes("gpt-5.1") || modelId.includes("gpt-5-1")
-}
-
-export function isGPT52(id: string): boolean {
-	const modelId = normalize(id)
-	return modelId.includes("gpt-5.2") || modelId.includes("gpt-5-2")
-}
-
-export function isGLM(id: string): boolean {
-	const modelId = normalize(id)
-	return (
-		modelId.includes("glm-5") ||
-		modelId.includes("glm-4.7") ||
-		modelId.includes("glm-4.6") ||
-		modelId.includes("glm-4.5") ||
-		modelId.includes("z-ai/glm") ||
-		modelId.includes("zai-org/glm")
-	)
-}
-
-export function isMinimax(id: string): boolean {
-	const modelId = normalize(id)
-	return modelId.includes("minimax")
-}
-
-export function isHermes(id: string): boolean {
-	const modelId = normalize(id)
-	return (
-		modelId.includes("hermes-4") ||
-		modelId.includes("hermes4") ||
-		modelId.includes("nous/hermes-4") ||
-		modelId.includes("nous/hermes4") ||
-		modelId.includes("nous-hermes-4") ||
-		modelId.includes("nous/hermes4") ||
-		modelId.includes("nousresearch/hermes-4") ||
-		modelId.includes("nousresearch/hermes4")
-	)
-}
-
-export function isNextGenOpenSource(id: string): boolean {
-	const modelId = normalize(id)
-	return ["kimi-k2"].some((substring) => modelId.includes(substring))
-}
-
-export function isDevstral(id: string): boolean {
-	const modelId = normalize(id)
-	return modelId.includes("devstral")
-}
-
-export function isTrinity(id: string): boolean {
-	const modelId = normalize(id)
-	// OpenRouter: arcee-ai/trinity-large-preview:free and other trinity variants
-	return modelId.includes("arcee-ai/trinity") || modelId.includes("trinity")
-}
-
-export function isGemini3(id: string): boolean {
-	const modelId = normalize(id)
-	return modelId.includes("gemini3") || modelId.includes("gemini-3")
-}
-
-export function isGeminiFlash(id: string): boolean {
-	const modelId = normalize(id)
-	const isGooglePrefixedGemini = modelId.startsWith("google/gemini")
-	const isDirectGemini = modelId.startsWith("gemini-")
-	return (isGooglePrefixedGemini || isDirectGemini) && modelId.includes("flash")
-}
-
-function isDeepSeek32(id: string): boolean {
-	const modelId = normalize(id)
-	return modelId.includes("deepseek") && modelId.includes("3.2") && !modelId.includes("speciale")
-}
-
-export function isDeepSeekNative(id: string): boolean {
-	const modelId = normalize(id)
-	return modelId.includes("deepseek-chat") || modelId.includes("deepseek-reasoner")
 }
 
 export function isLocalModel(providerInfo: ApiProviderInfo): boolean {
@@ -192,23 +69,6 @@ export function parsePrice(priceString: string | undefined): number {
 	return parsed * 1_000_000
 }
 
-/**
- * Determines if the given provider and model combination will use native tool calling.
- * Helpful if we need to quickly check this for prompts or other logic.
- * @param providerInfo The provider and model information
- * @param enableNativeToolCalls Whether the native tool calls setting is enabled
- * @returns true if the model will use native tool calling, false otherwise
- */
-export function isNativeToolCallingConfig(providerInfo: ApiProviderInfo, enableNativeToolCalls: boolean): boolean {
-	if (!enableNativeToolCalls) {
-		return false
-	}
-	if (!isNativeToolCallingProvider(providerInfo)) {
-		return false
-	}
-	const modelId = providerInfo.model.id.toLowerCase()
-	return true
-}
 
 /**
  * Check if parallel tool calling is enabled.

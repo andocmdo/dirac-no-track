@@ -108,7 +108,6 @@ export class PlanModeRespondHandler implements IToolHandler, IPartialBlockHandle
 		if (text === "PLAN_MODE_TOGGLE_RESPONSE") {
 			text = ""
 		}
-
 		// Check if options contains the text response
 		if (optionsRaw && text && parsePartialArrayString(optionsRaw).includes(text)) {
 			telemetryService.captureOptionSelected(config.ulid, options.length, "plan")

@@ -385,6 +385,8 @@ function createHandlerForProvider(
 				onRetryAttempt: options.onRetryAttempt,
 				zaiApiLine: options.zaiApiLine,
 				zaiApiKey: options.zaiApiKey,
+				thinkingBudgetTokens:
+					mode === "plan" ? options.planModeThinkingBudgetTokens : options.actModeThinkingBudgetTokens,
 				apiModelId: mode === "plan" ? options.planModeApiModelId : options.actModeApiModelId,
 			})
 		case "aihubmix":

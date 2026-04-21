@@ -9,6 +9,7 @@ export interface DiracMessageModelInfo {
 interface DiracTokensInfo {
 	prompt: number // Total input tokens (includes cached + non-cached)
 	completion: number // Total output tokens
+	reasoning?: number // Subset of completion_tokens that were reasoning tokens
 	cached: number // Subset of prompt_tokens that were cache hits
 }
 

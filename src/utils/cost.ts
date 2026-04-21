@@ -8,6 +8,7 @@ function calculateApiCostInternal(
 	cacheReadInputTokens: number,
 	totalInputTokensForPricing?: number, // The *total* input tokens, used for tiered pricing lookup
 	thinkingBudgetTokens?: number, // Add thinking budget info
+	reasoningTokens?: number,
 ): number {
 	const usedThinkingBudget = thinkingBudgetTokens && thinkingBudgetTokens > 0
 
@@ -56,6 +57,8 @@ function calculateApiCostInternal(
 	const baseInputCost = (effectiveInputPrice / 1_000_000) * inputTokens
 
 	// Use effectiveOutputPrice for outputCost
+	// If reasoningTokens are provided, they are billed at the output rate.
+	// In OpenAI/ZAI, completion_tokens (outputTokens) already includes reasoning_tokens.
 	const outputCost = (effectiveOutputPrice / 1_000_000) * outputTokens
 
 	const totalCost = cacheWritesCost + cacheReadsCost + baseInputCost + outputCost
@@ -69,6 +72,7 @@ export function calculateApiCostAnthropic(
 	cacheCreationInputTokens?: number,
 	cacheReadInputTokens?: number,
 	thinkingBudgetTokens?: number,
+	reasoningTokens?: number,
 ): number {
 	const cacheCreationInputTokensNum = cacheCreationInputTokens || 0
 	const cacheReadInputTokensNum = cacheReadInputTokens || 0
@@ -83,6 +87,7 @@ export function calculateApiCostAnthropic(
 		cacheReadInputTokensNum,
 		inputTokens + cacheCreationInputTokensNum + cacheReadInputTokensNum, // used for tiered price lookup
 		thinkingBudgetTokens,
+		reasoningTokens,
 	)
 }
 
@@ -94,6 +99,7 @@ export function calculateApiCostOpenAI(
 	cacheCreationInputTokens?: number,
 	cacheReadInputTokens?: number,
 	thinkingBudgetTokens?: number, // Pass thinking budget info
+	reasoningTokens?: number,
 ): number {
 	const cacheCreationInputTokensNum = cacheCreationInputTokens || 0
 	const cacheReadInputTokensNum = cacheReadInputTokens || 0
@@ -108,6 +114,7 @@ export function calculateApiCostOpenAI(
 		cacheReadInputTokensNum,
 		inputTokens,
 		thinkingBudgetTokens,
+		reasoningTokens,
 	)
 }
 
@@ -119,6 +126,7 @@ export function calculateApiCostQwen(
 	cacheCreationInputTokens?: number,
 	cacheReadInputTokens?: number,
 	thinkingBudgetTokens?: number,
+	reasoningTokens?: number,
 ): number {
 	const cacheCreationInputTokensNum = cacheCreationInputTokens || 0
 	const cacheReadInputTokensNum = cacheReadInputTokens || 0
@@ -133,5 +141,6 @@ export function calculateApiCostQwen(
 		cacheReadInputTokensNum,
 		inputTokens,
 		thinkingBudgetTokens,
+		reasoningTokens,
 	)
 }

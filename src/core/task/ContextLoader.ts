@@ -331,7 +331,6 @@ export class ContextLoader {
         localWorkflowToggles: any,
         globalWorkflowToggles: any,
         ulid: string,
-        useNativeToolCalls: boolean,
         providerInfo: any,
         includePathContext: boolean,
     ): Promise<{ enrichedText: string; needsDiracrulesFileCheck: boolean }> {
@@ -348,7 +347,6 @@ export class ContextLoader {
             localWorkflowToggles,
             globalWorkflowToggles,
             ulid,
-            useNativeToolCalls,
             providerInfo,
         )
 
@@ -384,7 +382,6 @@ export class ContextLoader {
 
         // Pre-fetch necessary data to avoid redundant calls within loops
         const ulid = this.dependencies.ulid
-        const useNativeToolCalls = this.dependencies.stateManager.getGlobalStateKey("nativeToolCallEnabled")
         const providerInfo = this.dependencies.getCurrentProviderInfo()
         const cwd = this.dependencies.cwd
         const { localWorkflowToggles, globalWorkflowToggles } = await refreshWorkflowToggles(this.dependencies.controller, cwd)
@@ -400,7 +397,6 @@ export class ContextLoader {
                 localWorkflowToggles,
                 globalWorkflowToggles,
                 ulid,
-                useNativeToolCalls,
                 providerInfo,
                 includeFileDetails,
 

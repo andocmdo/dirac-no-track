@@ -45,6 +45,51 @@ export type ApiProvider =
 	| "nousResearch"
 	| "wandb"
 
+export const ALL_PROVIDERS: ApiProvider[] = [
+	"anthropic",
+	"claude-code",
+	"openrouter",
+	"bedrock",
+	"vertex",
+	"openai",
+	"ollama",
+	"lmstudio",
+	"gemini",
+	"openai-native",
+	"openai-codex",
+	"requesty",
+	"together",
+	"deepseek",
+	"qwen",
+	"qwen-code",
+	"doubao",
+	"mistral",
+	"vscode-lm",
+	"dirac",
+	"litellm",
+	"moonshot",
+	"nebius",
+	"fireworks",
+	"asksage",
+	"xai",
+	"sambanova",
+	"cerebras",
+	"sapaicore",
+	"groq",
+	"huggingface",
+	"huawei-cloud-maas",
+	"dify",
+	"baseten",
+	"vercel-ai-gateway",
+	"zai",
+	"oca",
+	"aihubmix",
+	"minimax",
+	"hicap",
+	"nousResearch",
+	"wandb",
+]
+
 export const DEFAULT_API_PROVIDER = "openrouter" as ApiProvider
 
 export interface ApiHandlerOptions extends Partial<ApiHandlerSettings> {
@@ -3133,6 +3178,10 @@ export const internationalZAiModels = {
 		contextWindow: 200_000,
 		supportsImages: false,
 		supportsPromptCache: true,
+		supportsReasoning: true,
+		thinkingConfig: {
+			maxBudget: 128_000,
+		},
 		cacheReadsPrice: 0.26,
 		inputPrice: 1.4,
 		outputPrice: 4.4,
@@ -3142,15 +3191,23 @@ export const internationalZAiModels = {
 		contextWindow: 200_000,
 		supportsImages: false,
 		supportsPromptCache: true,
+		supportsReasoning: true,
+		thinkingConfig: {
+			maxBudget: 128_000,
+		},
 		cacheReadsPrice: 0.2,
 		inputPrice: 1.0,
 		outputPrice: 3.2,
 	},
 	"glm-4.7": {
-		maxTokens: 131_000,
+		maxTokens: 128_000,
 		contextWindow: 200_000,
 		supportsImages: false,
 		supportsPromptCache: true,
+		supportsReasoning: true,
+		thinkingConfig: {
+			maxBudget: 128_000,
+		},
 		cacheReadsPrice: 0.11,
 		inputPrice: 0.6,
 		outputPrice: 2.2,
@@ -3160,6 +3217,10 @@ export const internationalZAiModels = {
 		contextWindow: 200_000,
 		supportsImages: false,
 		supportsPromptCache: true,
+		supportsReasoning: true,
+		thinkingConfig: {
+			maxBudget: 128_000,
+		},
 		cacheReadsPrice: 0.11,
 		inputPrice: 0.6,
 		outputPrice: 2.2,
@@ -3169,20 +3230,41 @@ export const internationalZAiModels = {
 export type mainlandZAiModelId = keyof typeof mainlandZAiModels
 export const mainlandZAiDefaultModelId: mainlandZAiModelId = "glm-5"
 export const mainlandZAiModels = {
+	"glm-5.1": {
+		maxTokens: 128_000,
+		contextWindow: 200_000,
+		supportsImages: false,
+		supportsPromptCache: true,
+		supportsReasoning: true,
+		thinkingConfig: {
+			maxBudget: 128_000,
+		},
+		cacheReadsPrice: 0.26,
+		inputPrice: 1.4,
+		outputPrice: 4.4,
+	},
 	"glm-5": {
 		maxTokens: 128_000,
 		contextWindow: 200_000,
 		supportsImages: false,
 		supportsPromptCache: true,
+		supportsReasoning: true,
+		thinkingConfig: {
+			maxBudget: 128_000,
+		},
 		cacheReadsPrice: 0.2,
 		inputPrice: 1.0,
 		outputPrice: 3.2,
 	},
 	"glm-4.7": {
-		maxTokens: 131_000,
+		maxTokens: 128_000,
 		contextWindow: 200_000,
 		supportsImages: false,
 		supportsPromptCache: true,
+		supportsReasoning: true,
+		thinkingConfig: {
+			maxBudget: 128_000,
+		},
 		cacheReadsPrice: 0.11,
 		inputPrice: 0.6,
 		outputPrice: 2.2,
@@ -3192,6 +3274,10 @@ export const mainlandZAiModels = {
 		contextWindow: 200_000,
 		supportsImages: false,
 		supportsPromptCache: true,
+		supportsReasoning: true,
+		thinkingConfig: {
+			maxBudget: 128_000,
+		},
 		cacheReadsPrice: 0.11,
 		inputPrice: 0.6,
 		outputPrice: 2.2,
@@ -3443,3 +3529,52 @@ export const nousResearchModels = {
 			"This incarnation of Hermes 4 balances scale and size. It handles complex reasoning tasks, while staying fast and cost effective. A versatile choice for many use cases.",
 	},
 } as const satisfies Record<string, ModelInfo>
+
+/**
+ * Central registry of all hardcoded model maps.
+ * This is used as the single source of truth for model-to-provider mapping.
+ */
+export const ALL_MODEL_MAPS: [ApiProvider, Record<string, ModelInfo>][] = [
+	["anthropic", anthropicModels],
+	["claude-code", claudeCodeModels],
+	["bedrock", bedrockModels],
+	["vertex", vertexModels],
+	["gemini", geminiModels],
+	["openai-native", openAiNativeModels],
+	["openai-codex", openAiCodexModels],
+	["deepseek", deepSeekModels],
+	["huggingface", huggingFaceModels],
+	["qwen", internationalQwenModels],
+	["qwen", mainlandQwenModels],
+	["doubao", doubaoModels],
+	["mistral", mistralModels],
+	["asksage", askSageModels],
+	["nebius", nebiusModels],
+	["wandb", wandbModels],
+	["xai", xaiModels],
+	["sambanova", sambanovaModels],
+	["cerebras", cerebrasModels],
+	["groq", groqModels],
+	["sapaicore", sapAiCoreModels],
+	["moonshot", moonshotModels],
+	["huawei-cloud-maas", huaweiCloudMaasModels],
+	["baseten", basetenModels],
+	["zai", internationalZAiModels],
+	["zai", mainlandZAiModels],
+	["fireworks", fireworksModels],
+	["qwen-code", qwenCodeModels],
+	["minimax", minimaxModels],
+	["nousResearch", nousResearchModels],
+]
+
+/**
+ * Gets the provider for a given model ID based on hardcoded model maps.
+ */
+export function getProviderForModel(modelId: string): ApiProvider | undefined {
+	for (const [provider, map] of ALL_MODEL_MAPS) {
+		if (modelId in map) {
+			return provider
+		}
+	}
+	return undefined
+}

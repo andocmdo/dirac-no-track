@@ -1,17 +1,17 @@
 import {
-    ModelInfo,
-    OpenAiCompatibleModelInfo,
-    OpenAiNativeModelId,
-    openAiNativeDefaultModelId,
-    openAiNativeModels,
+	ModelInfo,
+	OpenAiCompatibleModelInfo,
+	OpenAiNativeModelId,
+	openAiNativeDefaultModelId,
+	openAiNativeModels,
 } from "@shared/api"
 import { normalizeOpenaiReasoningEffort } from "@shared/storage/types"
 import { calculateApiCostOpenAI } from "@utils/cost"
 import OpenAI from "openai"
 import type {
-    ChatCompletionFunctionTool,
-    ChatCompletionReasoningEffort,
-    ChatCompletionTool,
+	ChatCompletionFunctionTool,
+	ChatCompletionReasoningEffort,
+	ChatCompletionTool,
 } from "openai/resources/chat/completions"
 import { MessageEvent as UndiciMessageEvent, WebSocket as UndiciWebSocket } from "undici"
 import { buildExternalBasicHeaders } from "@/services/EnvUtils"
@@ -673,7 +673,7 @@ export class OpenAiNativeHandler implements ApiHandler {
 					outputTokens: outputTokens,
 					cacheWriteTokens: cacheWriteTokens,
 					cacheReadTokens: cacheReadTokens,
-					thoughtsTokenCount: reasoningTokens,
+					reasoningTokens: reasoningTokens,
 					totalCost: totalCost,
 					id: chunk.response.id,
 				}

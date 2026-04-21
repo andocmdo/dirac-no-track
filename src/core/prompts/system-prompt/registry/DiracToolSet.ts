@@ -1,6 +1,5 @@
 import { AgentConfigLoader } from "@core/task/tools/subagent/AgentConfigLoader"
 import { DiracDefaultTool } from "@/shared/tools"
-import { isNativeToolCallingConfig } from "@/utils/model-utils"
 import { type DiracToolSpec, toolSpecFunctionDeclarations, toolSpecFunctionDefinition, toolSpecInputSchema } from "../spec"
 import { SystemPromptContext } from "../types"
 
@@ -104,9 +103,6 @@ export class DiracToolSet {
 	}
 
 	public static getNativeTools(context: SystemPromptContext) {
-		if (!isNativeToolCallingConfig(context.providerInfo, context.enableNativeToolCalls || false)) {
-			return undefined
-		}
 
 		// Base set
 		const toolConfigs = DiracToolSet.getEnabledToolSpecs(context)

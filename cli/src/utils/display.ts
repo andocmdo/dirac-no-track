@@ -256,7 +256,10 @@ function formatSayMessage(message: DiracMessage, prefix: string, verbose: boolea
 					const info = JSON.parse(message.text || "{}")
 					if (info.cost !== undefined || info.tokensIn !== undefined) {
 						const costStr = info.cost !== undefined ? `Cost: $${info.cost.toFixed(4)}` : ""
-						const tokensStr = info.tokensIn !== undefined ? `Tokens: ${info.tokensIn.toLocaleString()} in, ${info.tokensOut.toLocaleString()} out` : ""
+						const tokensStr =
+							info.tokensIn !== undefined
+								? `Tokens: ${info.tokensIn.toLocaleString()} in, ${info.tokensOut.toLocaleString()} out${info.reasoningTokens ? ` (+${info.reasoningTokens.toLocaleString()} thinking)` : ""}`
+								: ""
 						const cacheStr =
 							info.cacheReads !== undefined || info.cacheWrites !== undefined
 								? ` (Cache: ${(info.cacheReads || 0).toLocaleString()} read, ${(info.cacheWrites || 0).toLocaleString()} write)`

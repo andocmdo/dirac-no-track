@@ -21,7 +21,6 @@
 import * as fs from "node:fs/promises"
 import * as path from "node:path"
 import { expect } from "chai"
-import { isNativeToolCallingConfig } from "@/utils/model-utils"
 import { getSystemPrompt } from "../index"
 import type { SystemPromptContext } from "../types"
 
@@ -135,7 +134,6 @@ const baseContext: SystemPromptContext = {
 	preferredLanguageInstructions: "Prefer TypeScript",
 	isTesting: true,
 	providerInfo: mockProviderInfo,
-	enableNativeToolCalls: false,
 }
 
 type TestRunner = Mocha.Context & { skip(): void; timeout(ms: number): void }
@@ -180,30 +178,16 @@ describe("Prompt System Integration Tests", () => {
 	describe("Snapshot Testing", () => {
 		for (const { modelId, providerId } of modelTestCases) {
 			describe(`Model: ${modelId} (${providerId})`, () => {
-				it(`should generate consistent native tools object when enabled`, async function () {
+				it(`should generate consistent native tools object`, async function () {
 					const providerInfo = makeProviderInfo(modelId, providerId)
-					const enableNativeToolCalls = true
-					const shouldExpectNativeTools = isNativeToolCallingConfig(providerInfo, enableNativeToolCalls)
 
 					const context: SystemPromptContext = {
 						...baseContext,
 						providerInfo,
-						enableNativeToolCalls,
 					}
 
 					await runPromptTest(this, context, modelId, async ({ tools }) => {
-						if (!shouldExpectNativeTools) {
-							expect(tools).to.be.undefined
-							return
-						}
-
 						expect(tools).to.be.an("array").that.is.not.empty
-						const toolNames = (tools as any[]).map((tool) => {
-							if (tool?.type === "function") {
-								return tool.function?.name
-							}
-							return tool?.name
-						})
 						const snapshotName = `${providerId}_${modelId.replace(/[^a-zA-Z0-9]/g, "_")}.tools.snap`
 						await assertSnapshot(snapshotName, JSON.stringify(tools, null, 2))
 					})
@@ -216,11 +200,10 @@ describe("Prompt System Integration Tests", () => {
 							...baseContext,
 							...override,
 							providerInfo,
-							enableNativeToolCalls: false,
 						}
 
 						await runPromptTest(this, context, modelId, async ({ systemPrompt, tools }) => {
-							expect(tools).to.be.undefined
+							expect(tools).to.be.an("array").that.is.not.empty
 
 							expect(systemPrompt).to.be.a("string").with.length.greaterThan(100)
 

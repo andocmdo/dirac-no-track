@@ -97,7 +97,6 @@ export interface ExtensionState {
 	statistic?: Record<string, any>
 	globalSkillsToggles?: Record<string, boolean>
 	localSkillsToggles?: Record<string, boolean>
-	nativeToolCallSetting?: boolean
 	enableParallelToolCalling?: boolean
 	backgroundEditEnabled?: boolean
 	writePromptMetadataEnabled?: boolean
@@ -114,6 +113,7 @@ export interface DiracMessage {
 	ts: number
 	type: "ask" | "say"
 	ask?: DiracAsk
+	reasoningTokens?: number,
 	say?: DiracSay
 	text?: string
 	reasoning?: string
@@ -404,6 +404,7 @@ export interface DiracApiReqInfo {
 	tokensIn?: number
 	tokensOut?: number
 	cacheWrites?: number
+	reasoningTokens?: number,
 	cacheReads?: number
 	cost?: number
 	contextWindow?: number

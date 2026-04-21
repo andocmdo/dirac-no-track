@@ -563,7 +563,6 @@ export class Controller {
 	}
 
 	async getStateToPostToWebview(): Promise<ExtensionState> {
-		const nativeToolCallEnabled = this.stateManager.getGlobalStateKey("nativeToolCallEnabled")
 		// Get API configuration from cache for immediate access
 		const onboardingModels = getDiracOnboardingModels()
 		const apiConfiguration = this.stateManager.getApiConfiguration()

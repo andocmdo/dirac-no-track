@@ -3,10 +3,8 @@ import { DiracRulesToggles } from "@shared/dirac-rules"
 import fs from "fs/promises"
 import { telemetryService } from "@/services/telemetry"
 import { Logger } from "@/shared/services/Logger"
-import { isNativeToolCallingConfig } from "@/utils/model-utils"
 import {
     condenseToolResponse,
-    deepPlanningToolResponse,
     explainChangesToolResponse,
     newRuleToolResponse,
     newTaskToolResponse,
@@ -38,21 +36,18 @@ export async function parseSlashCommands(
 	localWorkflowToggles: DiracRulesToggles,
 	globalWorkflowToggles: DiracRulesToggles,
 	ulid: string,
-	enableNativeToolCalls?: boolean,
 	providerInfo?: ApiProviderInfo,
 ): Promise<{ processedText: string; needsDiracrulesFileCheck: boolean }> {
-	const SUPPORTED_DEFAULT_COMMANDS = ["newtask", "smol", "compact", "newrule", "reportbug", "deep-planning", "explain-changes"]
+	const SUPPORTED_DEFAULT_COMMANDS = ["newtask", "smol", "compact", "newrule", "reportbug", "explain-changes"]
 
-	// Determine if the current provider/model/setting actually uses native tool calling
-	const willUseNativeTools = isNativeToolCallingConfig(providerInfo!, enableNativeToolCalls || false)
+	const willUseNativeTools = true
 
 	const commandReplacements: Record<string, string> = {
-		newtask: newTaskToolResponse(willUseNativeTools),
+		newtask: newTaskToolResponse(),
 		smol: condenseToolResponse(),
 		compact: condenseToolResponse(),
 		newrule: newRuleToolResponse(),
 		reportbug: reportBugToolResponse(),
-		"deep-planning": deepPlanningToolResponse(providerInfo, willUseNativeTools),
 		"explain-changes": explainChangesToolResponse(),
 	}
 

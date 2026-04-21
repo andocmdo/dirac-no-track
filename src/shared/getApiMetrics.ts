@@ -6,6 +6,7 @@ interface ApiMetrics {
 	totalCacheWrites?: number
 	totalCacheReads?: number
 	totalCost: number
+	totalReasoningTokens: number
 }
 
 /**
@@ -35,6 +36,7 @@ export function getApiMetrics(messages: DiracMessage[]): ApiMetrics {
 		totalCacheWrites: undefined,
 		totalCacheReads: undefined,
 		totalCost: 0,
+		totalReasoningTokens: 0,
 	}
 
 	messages.forEach((message) => {
@@ -45,7 +47,7 @@ export function getApiMetrics(messages: DiracMessage[]): ApiMetrics {
 		) {
 			try {
 				const parsedData = JSON.parse(message.text)
-				const { tokensIn, tokensOut, cacheWrites, cacheReads, cost } = parsedData
+				const { tokensIn, tokensOut, cacheWrites, cacheReads, cost, reasoningTokens } = parsedData
 
 				if (typeof tokensIn === "number") {
 					result.totalTokensIn += tokensIn
@@ -61,6 +63,9 @@ export function getApiMetrics(messages: DiracMessage[]): ApiMetrics {
 				}
 				if (typeof cost === "number") {
 					result.totalCost += cost
+				}
+				if (typeof reasoningTokens === "number") {
+					result.totalReasoningTokens += reasoningTokens
 				}
 			} catch {
 				// Ignore JSON parse errors

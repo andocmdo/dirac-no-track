@@ -102,7 +102,6 @@ interface SettingsState {
 	multiRootSetting: { user: boolean; featureFlag: boolean }
 	hooksEnabled: boolean
 	triggerNativeToolCall: boolean
-	nativeToolCallSetting: boolean
 	enableParallelToolCalling: boolean
 	writePromptMetadataEnabled: boolean
 	writePromptMetadataDirectory?: string
@@ -204,7 +203,6 @@ export const useSettingsStore = create<SettingsState>((set) => ({
 	isMultiRootWorkspace: false,
 	multiRootSetting: { user: false, featureFlag: false },
 	hooksEnabled: false,
-	nativeToolCallSetting: false,
 	enableParallelToolCalling: false,
 	writePromptMetadataEnabled: false,
 	writePromptMetadataDirectory: undefined,

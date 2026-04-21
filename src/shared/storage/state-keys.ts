@@ -55,7 +55,6 @@ const GLOBAL_STATE_FIELDS = {
 	lastDismissedInfoBannerVersion: { default: 0 as number },
 	lastDismissedModelBannerVersion: { default: 0 as number },
 	lastDismissedCliBannerVersion: { default: 0 as number },
-	nativeToolCallEnabled: { default: true as boolean },
 	remoteRulesToggles: { default: {} as DiracRulesToggles },
 	remoteWorkflowToggles: { default: {} as DiracRulesToggles },
 	dismissedBanners: { default: [] as Array<{ bannerId: string; dismissedAt: number }> },

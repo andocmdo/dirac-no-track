@@ -1,7 +1,5 @@
-import type { ApiProviderInfo } from "@/core/api"
-import { getDeepPlanningPrompt } from "./commands/deep-planning"
 
-export const newTaskToolResponse = (willUseNativeTools: boolean) => {
+export const newTaskToolResponse = () => {
 	const xmlExample = `
 Example:
 <new_task>
@@ -34,7 +32,7 @@ Example:
 
 	return `<explicit_instructions type="new_task">
 The user has explicitly asked you to help them create a new task with preloaded context, which you will generate. The user may have provided instructions or additional information for you to consider when summarizing existing work and creating the context for the new task.
-Irrespective of whether additional information or instructions are given, you are ONLY allowed to respond to this message by calling the new_task tool.${willUseNativeTools ? " You MUST call the new_task tool EVEN if it's not in your existing toolset." : ""}
+Irrespective of whether additional information or instructions are given, you are ONLY allowed to respond to this message by calling the new_task tool. You MUST call the new_task tool EVEN if it's not in your existing toolset.
 
 The new_task tool is defined below:
 
@@ -284,16 +282,3 @@ Below is the user's input describing what changes they want explained. If no inp
 </explicit_instructions>\n
 `
 
-/**
-/**
- * Generates the deep-planning slash command response with model-family-aware variant selection
- * @param providerInfo Optional API provider info for model family detection
- * @param enableNativeToolCalls Optional flag to determine if native tool calling is enabled
- * @returns The deep-planning prompt string with appropriate variant and focus chain settings applied
- */
-export const deepPlanningToolResponse = (
-	providerInfo?: ApiProviderInfo,
-	enableNativeToolCalls?: boolean,
-) => {
-	return getDeepPlanningPrompt(providerInfo, enableNativeToolCalls)
-}
