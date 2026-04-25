@@ -72,11 +72,7 @@ export class ListFilesToolHandler implements IFullyManagedTool {
 
 		// Validate required parameters
 		let validation: { ok: boolean; error?: string; paramName?: string }
-		if (block.params.paths) {
-			validation = { ...this.validator.assertRequiredParams(block, "paths"), paramName: "paths" }
-		} else {
-			validation = { ok: false, error: "Missing required parameter: 'paths' must be provided." }
-		}
+		validation = { ...this.validator.assertRequiredParams(block, "paths"), paramName: "paths" }
 
 		if (!validation.ok) {
 			config.taskState.consecutiveMistakeCount++

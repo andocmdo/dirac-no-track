@@ -28,7 +28,7 @@
     "type": "function",
     "function": {
       "name": "attempt_completion",
-      "description": "Presents the final result to the user once the task is completely finished and verified.",
+      "description": "Presents a brief and informative summary of the final result. Keep it concise while covering important changes.",
       "strict": false,
       "parameters": {
         "type": "object",
@@ -262,7 +262,7 @@
     "type": "function",
     "function": {
       "name": "execute_command",
-      "description": "Executes CLI commands or scripts. Use 'commands' for simple sequences of shell operations. Use 'script' for complex multi-line logic, data processing, or when a high-level language like Python or Node.js is more efficient than shell scripting. Default language is bash'script' are also very useful for combinatorial problems such as looping over 'swap and try' patternScripts have full access to the file system and current environment, be careful. In multi-root workspaces, use the @workspace:command syntax for standard commands. Leverage the full power of the environment's interpreters (bash, python, node, etc.) to accomplish tasks with minimal round-trips.",
+      "description": "Executes CLI commands or scripts. Use 'commands' for simple sequences of shell operations, can also be a single command. Use 'script' for complex multi-line logic, data processing, or when a high-level language like Python or Node.js is more efficient than shell scripting. Default language is bash'script' are also very useful for combinatorial problems such as looping over 'swap and try' patternScripts have full access to the file system and current environment, be careful. In multi-root workspaces, use the @workspace:command syntax for standard commands. Leverage the full power of the environment's interpreters (bash, python, node, etc.) to accomplish tasks with minimal round-trips.NOTE: provide exactly one of the {commands,script}",
       "strict": false,
       "parameters": {
         "type": "object",
@@ -389,14 +389,14 @@
     "type": "function",
     "function": {
       "name": "list_files",
-      "description": "List files and directories within the specified directory. If recursive is true, it will list all files and directories recursively. Skips non-useful content (.git, node_modules, build artifacts, etc.). Files are sorted by most recently modified first within each directory. The output includes the line count for each file. Do not use this tool to confirm the existence of files you've just created.",
+      "description": "List files and directories within the specified paths (one or more), or provide information about a specific file if a file path is provided. If recursive is true, it will list all files and directories recursively. Skips non-useful content (.git, node_modules, build artifacts, etc.). Files are sorted by most recently modified first within each directory. The output includes the line count for each file. Do not use this tool to confirm the existence of files you've just created.",
       "strict": false,
       "parameters": {
         "type": "object",
         "properties": {
           "paths": {
             "type": "array",
-            "description": "The path of the directory to list contents for (relative to the current working directory /test/project) Example: [\"src/components\", \"src/utils\"]",
+            "description": "The paths of the directory to list contents for (relative to the current working directory /test/project) Example: [\"src/components\", \"src/utils\"]",
             "items": {
               "type": "string"
             }
@@ -495,14 +495,17 @@
     "type": "function",
     "function": {
       "name": "search_files",
-      "description": "Regex search across files in a specified directory. Skips non-useful content (.git, node_modules, build artifacts, etc. and all files and directories starting with a dot). Prefer AST tools over this when reasonable.",
+      "description": "Regex search across files in the specified paths (files or directories). Skips non-useful content (.git, node_modules, build artifacts, etc. and all files and directories starting with a dot). Prefer AST tools over this when reasonable.",
       "strict": false,
       "parameters": {
         "type": "object",
         "properties": {
-          "path": {
-            "type": "string",
-            "description": "The path of the directory to search in. Example: Directory path here"
+          "paths": {
+            "type": "array",
+            "description": "The paths of the files or directories to search in. Example: [\"src/core\", \"src/services\"]",
+            "items": {
+              "type": "string"
+            }
           },
           "regex": {
             "type": "string",
@@ -518,7 +521,7 @@
           }
         },
         "required": [
-          "path",
+          "paths",
           "regex"
         ],
         "additionalProperties": false
@@ -529,7 +532,7 @@
     "type": "function",
     "function": {
       "name": "use_subagents",
-      "description": "Run between two and five focused in-process subagents in parallel. Each subagent gets its own prompt and returns a comprehensive research result. Use this for broad exploration, parallel research across different modules, deep-diving into multiple potential implementations, or concurrent analysis of logs and test results. It's particularly effective for investigating multiple independent paths simultaneously without consuming the main agent's context window.",
+      "description": "Run between two and five focused in-process subagents in parallel. Each subagent gets its own prompt and returns a comprehensive research result. Default timeout is 300 seconds. Particularly effective for investigating multiple independent paths simultaneously without consuming the your context window.",
       "strict": false,
       "parameters": {
         "type": "object",
@@ -560,7 +563,7 @@
           },
           "timeout": {
             "type": "string",
-            "description": "Optional timeout in seconds for each subagent."
+            "description": "Optional timeout in seconds for each subagent. Defaults to 300 seconds."
           },
           "max_turns": {
             "type": "string",

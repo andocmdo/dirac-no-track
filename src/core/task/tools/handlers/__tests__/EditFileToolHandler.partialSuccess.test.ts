@@ -131,8 +131,12 @@ function makeMultiEditBlock(
 		type: "tool_use" as const,
 		name: DiracDefaultTool.EDIT_FILE,
 		params: {
-			path: relPath,
-			edits: edits,
+			files: [
+				{
+					path: relPath,
+					edits: edits,
+				},
+			],
 		},
 		partial: false,
 		call_id: `call-${Math.random()}`,

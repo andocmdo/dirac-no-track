@@ -200,8 +200,12 @@ describe("EditFileToolHandler – diagnostics", () => {
 			type: "tool_use" as const,
 			name: DiracDefaultTool.EDIT_FILE,
 			params: {
-				path: fileName,
-				edits: [{ edit_type: "replace", anchor: anchors[1], end_anchor: anchors[1], text: "fixed line 2" }],
+				files: [
+					{
+						path: fileName,
+						edits: [{ edit_type: "replace", anchor: anchors[1], end_anchor: anchors[1], text: "fixed line 2" }],
+					},
+				],
 			},
 			partial: false,
 			call_id: "call-1",
@@ -251,8 +255,12 @@ describe("EditFileToolHandler – diagnostics", () => {
 			type: "tool_use" as const,
 			name: DiracDefaultTool.EDIT_FILE,
 			params: {
-				path: fileName,
-				edits: [{ edit_type: "replace", anchor: anchors[1], end_anchor: anchors[1], text: "bad line 2" }],
+				files: [
+					{
+						path: fileName,
+						edits: [{ edit_type: "replace", anchor: anchors[1], end_anchor: anchors[1], text: "bad line 2" }],
+					},
+				],
 			},
 			partial: false,
 			call_id: "call-2",
@@ -306,8 +314,12 @@ describe("EditFileToolHandler – diagnostics", () => {
 			type: "tool_use" as const,
 			name: DiracDefaultTool.EDIT_FILE,
 			params: {
-				path: fileName,
-				edits: [{ edit_type: "replace", anchor: anchors[0], end_anchor: anchors[0], text: "changed" }],
+				files: [
+					{
+						path: fileName,
+						edits: [{ edit_type: "replace", anchor: anchors[0], end_anchor: anchors[0], text: "changed" }],
+					},
+				],
 			},
 			partial: false,
 			call_id: "call-3",
@@ -370,8 +382,12 @@ describe("EditFileToolHandler – diagnostics", () => {
 			type: "tool_use" as const,
 			name: DiracDefaultTool.EDIT_FILE,
 			params: {
-				path: fileName,
-				edits: [{ edit_type: "replace", anchor: anchors[0], end_anchor: anchors[0], text: "mixed" }],
+				files: [
+					{
+						path: fileName,
+						edits: [{ edit_type: "replace", anchor: anchors[0], end_anchor: anchors[0], text: "mixed" }],
+					},
+				],
 			},
 			partial: false,
 			call_id: "call-4",
@@ -411,8 +427,12 @@ describe("EditFileToolHandler – diagnostics", () => {
 			type: "tool_use" as const,
 			name: DiracDefaultTool.EDIT_FILE,
 			params: {
-				path: fileName,
-				edits: [{ edit_type: "replace", anchor: anchors[0], end_anchor: anchors[0], text: "new line 1" }],
+				files: [
+					{
+						path: fileName,
+						edits: [{ edit_type: "replace", anchor: anchors[0], end_anchor: anchors[0], text: "new line 1" }],
+					},
+				],
 			},
 			partial: false,
 			call_id: "call-5",

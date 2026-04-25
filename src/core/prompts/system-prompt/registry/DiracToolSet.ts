@@ -110,7 +110,9 @@ export class DiracToolSet {
 		const enabledTools = toolConfigs.filter(
 			(tool) => typeof tool.description === "string" && tool.description.trim().length > 0,
 		)
-		const converter = DiracToolSet.getNativeConverter(context.providerInfo.providerId, context.providerInfo.model.id)
+		const providerId = context.providerInfo?.providerId || "openai"
+		const modelId = context.providerInfo?.model?.id
+		const converter = DiracToolSet.getNativeConverter(providerId, modelId)
 
 		return enabledTools.map((tool) => converter(tool, context))
 	}

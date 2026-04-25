@@ -22,8 +22,9 @@ describe("listFiles", () => {
 		await fs.writeFile(filePath, "export const x = 1\n")
 
 		const [files, didHitLimit] = await listFiles(filePath, false, 200)
-
-		files.should.deepEqual([])
+		files.should.have.length(1)
+		files[0].path.should.equal(normalizeForComparison(filePath))
+		files[0].isDirectory.should.equal(false)
 		didHitLimit.should.equal(false)
 	})
 

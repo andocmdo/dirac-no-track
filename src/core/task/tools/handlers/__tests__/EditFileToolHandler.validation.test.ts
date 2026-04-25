@@ -173,8 +173,12 @@ describe("EditFileToolHandler.execute – validation", () => {
 			type: "tool_use" as const,
 			name: DiracDefaultTool.EDIT_FILE,
 			params: {
-				path: fileName,
-				edits: JSON.stringify(edits), // Stringified!
+				files: [
+					{
+						path: fileName,
+						edits: JSON.stringify(edits), // Stringified!
+					},
+				],
 			},
 			partial: false,
 			call_id: "call-1",
@@ -201,8 +205,12 @@ describe("EditFileToolHandler.execute – validation", () => {
 			type: "tool_use" as const,
 			name: DiracDefaultTool.EDIT_FILE,
 			params: {
-				path: "test.txt",
-				edits: "not-json",
+				files: [
+					{
+						path: "test.txt",
+						edits: "not-json",
+					},
+				],
 			},
 			partial: false,
 			call_id: "call-2",
@@ -215,6 +223,6 @@ describe("EditFileToolHandler.execute – validation", () => {
 		// Verify tool response indicates error
 		assert.ok(typeof result === "string")
 		assert.ok(result.includes("The tool execution failed with the following error"))
-		assert.ok(result.includes("The 'edits' parameter must be an array."))
+		assert.ok(result.includes("The 'edits' parameter must be a valid JSON array of objects. If you provided a string, ensure it is valid JSON."))
 	})
 })

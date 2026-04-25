@@ -389,8 +389,8 @@ export class SubagentRunner {
 				}
 				systemPrompt += `\n\n# Execution Limits\nYou must complete your task and call attempt_completion within ${limits.join(" and ")}.`
 			}
-			const useNativeToolCalls = true
-			const nativeTools = useNativeToolCalls ? this.agent.buildNativeTools(context) : undefined
+			const nativeTools = this.agent.buildNativeTools(context)
+			const useNativeToolCalls = !!nativeTools && nativeTools.length > 0
 			const workspaceMetadataEnvironmentBlock = await this.getWorkspaceMetadataEnvironmentBlock()
 
 			if (useNativeToolCalls && (!nativeTools || nativeTools.length === 0)) {

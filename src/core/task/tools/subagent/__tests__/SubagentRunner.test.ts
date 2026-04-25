@@ -312,7 +312,7 @@ describe("SubagentRunner", () => {
 
 		const promptRegistry = PromptRegistry.getInstance()
 		sinon.stub(promptRegistry, "get").callsFake(async () => {
-			promptRegistry.nativeTools = undefined
+			sinon.stub(SubagentBuilder.prototype, "buildNativeTools").returns([])
 			return "system prompt"
 		})
 		sinon.stub(skills, "discoverSkills").resolves([])

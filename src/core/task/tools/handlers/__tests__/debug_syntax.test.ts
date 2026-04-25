@@ -58,6 +58,16 @@ function createConfig() {
 			},
 			diffViewProvider,
 			diracIgnoreController: { validateAccess: () => true },
+			stateManager: {
+				getApiConfiguration: () => ({
+					planModeApiProvider: "openai",
+					actModeApiProvider: "openai",
+				}),
+				getGlobalSettingsKey: (key: string) => {
+					if (key === "mode") return "act"
+					return undefined
+				},
+			},
 		},
 		callbacks,
 	} as unknown as TaskConfig
@@ -106,13 +116,17 @@ describe("EditFileToolHandler – debug syntax", () => {
 			type: "tool_use" as const,
 			name: DiracDefaultTool.EDIT_FILE,
 			params: {
-				path: fileName,
-				edits: [
+				files: [
 					{
-						edit_type: "replace",
-						anchor: anchors[1],
-						end_anchor: anchors[1],
-						text: "    print('missing closing paren'",
+						path: fileName,
+						edits: [
+							{
+								edit_type: "replace",
+								anchor: anchors[1],
+								end_anchor: anchors[1],
+								text: "    print('missing closing paren'",
+							},
+						],
 					},
 				],
 			},

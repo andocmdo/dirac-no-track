@@ -116,7 +116,7 @@ function makeBlock(relPath?: string) {
 	return {
 		type: "tool_use" as const,
 		name: DiracDefaultTool.FILE_READ,
-		params: relPath !== undefined ? { path: relPath } : {},
+		params: relPath !== undefined ? { paths: [relPath] } : {},
 		partial: false,
 	}
 }

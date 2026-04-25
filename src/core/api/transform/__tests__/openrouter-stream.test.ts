@@ -63,7 +63,7 @@ describe("createOpenRouterStream", () => {
 		})
 
 		const payload = create.firstCall.args[0] as Record<string, unknown>
-		payload.should.not.have.property("max_tokens")
+		payload.should.have.property("max_tokens", 32_768)
 	})
 
 	it("does not send max_tokens for non-Flash Gemini models", async () => {
@@ -75,6 +75,6 @@ describe("createOpenRouterStream", () => {
 		})
 
 		const payload = create.firstCall.args[0] as Record<string, unknown>
-		payload.should.not.have.property("max_tokens")
+		payload.should.have.property("max_tokens", 32_768)
 	})
 })

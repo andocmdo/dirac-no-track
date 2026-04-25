@@ -133,12 +133,12 @@ describe("ListFilesToolHandler.execute – error recovery", () => {
 	})
 
 	function makeBlock(paths?: string | string[], recursive?: string) {
-		const params: Record<string, any> = {}
+		const params: any = {}
 		if (paths !== undefined) {
 			if (Array.isArray(paths)) {
 				params.paths = paths
 			} else {
-				params.path = paths
+				params.paths = [paths]
 			}
 		}
 		if (recursive !== undefined) params.recursive = recursive
@@ -332,7 +332,7 @@ describe("SearchFilesToolHandler.execute – error recovery", () => {
 			if (Array.isArray(relPaths)) {
 				params.paths = relPaths
 			} else {
-				params.path = relPaths
+				params.paths = [relPaths]
 			}
 		}
 		if (regex !== undefined) params.regex = regex

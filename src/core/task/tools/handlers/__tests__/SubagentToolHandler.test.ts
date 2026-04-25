@@ -470,7 +470,7 @@ describe("SubagentToolHandler", () => {
 		assert.equal(approvalPayload.timeout, 300)
 
 		// Check runner call
-		assert.equal(runStub.firstCall.args[3], 300)
+		assert.equal(runStub.firstCall.args[2], 300)
 	})
 
 
