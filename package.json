@@ -542,7 +542,6 @@
 		"nanoid": "^5.1.6",
 		"nice-grpc": "^2.1.12",
 		"node-machine-id": "^1.1.12",
-		"ollama": "^0.6.3",
 		"open": "^10.1.2",
 		"open-graph-scraper": "^6.9.0",
 		"openai": "^6.34.0",

@@ -42,7 +42,7 @@ export function isGPT5(id: string): boolean {
 }
 
 export function isLocalModel(providerInfo: ApiProviderInfo): boolean {
-	const localProviders = ["lmstudio", "ollama"]
+	const localProviders = ["lmstudio"]
 	return localProviders.includes(normalize(providerInfo.providerId))
 }
 

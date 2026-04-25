@@ -22,7 +22,6 @@ export async function migrateWorkspaceToGlobalStorage(context: vscode.ExtensionC
 		"openRouterModelInfo",
 		"openAiModelId",
 		"openAiModelInfo",
-		"ollamaModelId",
 		"lmStudioModelId",
 		"liteLlmModelId",
 		"liteLlmModelInfo",
@@ -205,7 +204,6 @@ export async function migrateLegacyApiConfigurationToModeSpecific(context: vscod
 		const openRouterModelInfo = await context.globalState.get("openRouterModelInfo")
 		const openAiModelId = await context.globalState.get("openAiModelId")
 		const openAiModelInfo = await context.globalState.get("openAiModelInfo")
-		const ollamaModelId = await context.globalState.get("ollamaModelId")
 		const lmStudioModelId = await context.globalState.get("lmStudioModelId")
 		const liteLlmModelId = await context.globalState.get("liteLlmModelId")
 		const liteLlmModelInfo = await context.globalState.get("liteLlmModelInfo")
@@ -278,10 +276,6 @@ export async function migrateLegacyApiConfigurationToModeSpecific(context: vscod
 			if (openAiModelInfo !== undefined) {
 				await context.globalState.update("planModeOpenAiModelInfo", openAiModelInfo)
 				await context.globalState.update("actModeOpenAiModelInfo", openAiModelInfo)
-			}
-			if (ollamaModelId !== undefined) {
-				await context.globalState.update("planModeOllamaModelId", ollamaModelId)
-				await context.globalState.update("actModeOllamaModelId", ollamaModelId)
 			}
 			if (lmStudioModelId !== undefined) {
 				await context.globalState.update("planModeLmStudioModelId", lmStudioModelId)
@@ -367,9 +361,6 @@ export async function migrateLegacyApiConfigurationToModeSpecific(context: vscod
 			}
 			if (openAiModelInfo !== undefined) {
 				await context.globalState.update("planModeOpenAiModelInfo", openAiModelInfo)
-			}
-			if (ollamaModelId !== undefined) {
-				await context.globalState.update("planModeOllamaModelId", ollamaModelId)
 			}
 			if (lmStudioModelId !== undefined) {
 				await context.globalState.update("planModeLmStudioModelId", lmStudioModelId)
@@ -465,9 +456,6 @@ export async function migrateLegacyApiConfigurationToModeSpecific(context: vscod
 			if (openAiModelInfo !== undefined) {
 				await context.globalState.update("actModeOpenAiModelInfo", openAiModelInfo)
 			}
-			if (ollamaModelId !== undefined) {
-				await context.globalState.update("actModeOllamaModelId", ollamaModelId)
-			}
 			if (lmStudioModelId !== undefined) {
 				await context.globalState.update("actModeLmStudioModelId", lmStudioModelId)
 			}
@@ -516,7 +504,6 @@ export async function migrateLegacyApiConfigurationToModeSpecific(context: vscod
 		await context.globalState.update("openRouterModelInfo", undefined)
 		await context.globalState.update("openAiModelId", undefined)
 		await context.globalState.update("openAiModelInfo", undefined)
-		await context.globalState.update("ollamaModelId", undefined)
 		await context.globalState.update("lmStudioModelId", undefined)
 		await context.globalState.update("liteLlmModelId", undefined)
 		await context.globalState.update("liteLlmModelInfo", undefined)
@@ -559,7 +546,6 @@ export async function migrateWelcomeViewCompleted(context: vscode.ExtensionConte
 			const openRouterApiKey = await context.secrets.get("openRouterApiKey")
 			const diracAccountId = await context.secrets.get("diracAccountId")
 			const openAiApiKey = await context.secrets.get("openAiApiKey")
-			const ollamaApiKey = await context.secrets.get("ollamaApiKey")
 			const liteLlmApiKey = await context.secrets.get("liteLlmApiKey")
 			const geminiApiKey = await context.secrets.get("geminiApiKey")
 			const openAiNativeApiKey = await context.secrets.get("openAiNativeApiKey")
@@ -581,9 +567,7 @@ export async function migrateWelcomeViewCompleted(context: vscode.ExtensionConte
 			// Fetch configuration values from global state
 			const awsRegion = context.globalState.get("awsRegion")
 			const vertexProjectId = context.globalState.get("vertexProjectId")
-			const planModeOllamaModelId = context.globalState.get("planModeOllamaModelId")
 			const planModeLmStudioModelId = context.globalState.get("planModeLmStudioModelId")
-			const actModeOllamaModelId = context.globalState.get("actModeOllamaModelId")
 			const actModeLmStudioModelId = context.globalState.get("actModeLmStudioModelId")
 			const planModeVsCodeLmModelSelector = context.globalState.get("planModeVsCodeLmModelSelector")
 			const actModeVsCodeLmModelSelector = context.globalState.get("actModeVsCodeLmModelSelector")
@@ -596,10 +580,7 @@ export async function migrateWelcomeViewCompleted(context: vscode.ExtensionConte
 				awsRegion,
 				vertexProjectId,
 				openAiApiKey,
-				ollamaApiKey,
-				planModeOllamaModelId,
 				planModeLmStudioModelId,
-				actModeOllamaModelId,
 				actModeLmStudioModelId,
 				liteLlmApiKey,
 				geminiApiKey,

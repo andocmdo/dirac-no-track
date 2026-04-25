@@ -9,7 +9,6 @@ export function validateApiConfiguration(currentMode: Mode, apiConfiguration?: A
 			openAiModelId,
 			requestyModelId,
 			togetherModelId,
-			ollamaModelId,
 			lmStudioModelId,
 			vsCodeLmModelSelector,
 		} = getModeSpecificFields(apiConfiguration, currentMode)
@@ -98,11 +97,6 @@ export function validateApiConfiguration(currentMode: Mode, apiConfiguration?: A
 			case "together":
 				if (!apiConfiguration.togetherApiKey || !togetherModelId) {
 					return "You must provide a valid API key or choose a different provider."
-				}
-				break
-			case "ollama":
-				if (!ollamaModelId) {
-					return "You must provide a valid model ID."
 				}
 				break
 			case "lmstudio":

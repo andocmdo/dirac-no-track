@@ -254,8 +254,6 @@ function convertApiProviderToProto(provider: string | undefined): ProtoApiProvid
 			return ProtoApiProvider.VERTEX
 		case "openai":
 			return ProtoApiProvider.OPENAI
-		case "ollama":
-			return ProtoApiProvider.OLLAMA
 		case "lmstudio":
 			return ProtoApiProvider.LMSTUDIO
 		case "gemini":
@@ -344,8 +342,6 @@ export function convertProtoToApiProvider(provider: ProtoApiProvider): ApiProvid
 			return "vertex"
 		case ProtoApiProvider.OPENAI:
 			return "openai"
-		case ProtoApiProvider.OLLAMA:
-			return "ollama"
 		case ProtoApiProvider.LMSTUDIO:
 			return "lmstudio"
 		case ProtoApiProvider.GEMINI:
@@ -451,9 +447,6 @@ export function convertApiConfigurationToProto(config: ApiConfiguration): ProtoA
 		vertexRegion: config.vertexRegion,
 		openAiBaseUrl: config.openAiBaseUrl,
 		openAiApiKey: config.openAiApiKey,
-		ollamaBaseUrl: config.ollamaBaseUrl,
-		ollamaApiKey: config.ollamaApiKey,
-		ollamaApiOptionsCtxNum: config.ollamaApiOptionsCtxNum,
 		lmStudioBaseUrl: config.lmStudioBaseUrl,
 		lmStudioMaxTokens: config.lmStudioMaxTokens,
 		geminiApiKey: config.geminiApiKey,
@@ -522,7 +515,6 @@ export function convertApiConfigurationToProto(config: ApiConfiguration): ProtoA
 		planModeDiracModelInfo: convertModelInfoToProtoOpenRouter(config.planModeDiracModelInfo),
 		planModeOpenAiModelId: config.planModeOpenAiModelId,
 		planModeOpenAiModelInfo: convertOpenAiCompatibleModelInfoToProto(config.planModeOpenAiModelInfo),
-		planModeOllamaModelId: config.planModeOllamaModelId,
 		planModeLmStudioModelId: config.planModeLmStudioModelId,
 		planModeLiteLlmModelId: config.planModeLiteLlmModelId,
 		planModeLiteLlmModelInfo: convertLiteLLMModelInfoToProto(config.planModeLiteLlmModelInfo),
@@ -563,7 +555,6 @@ export function convertApiConfigurationToProto(config: ApiConfiguration): ProtoA
 		actModeDiracModelInfo: convertModelInfoToProtoOpenRouter(config.actModeDiracModelInfo),
 		actModeOpenAiModelId: config.actModeOpenAiModelId,
 		actModeOpenAiModelInfo: convertOpenAiCompatibleModelInfoToProto(config.actModeOpenAiModelInfo),
-		actModeOllamaModelId: config.actModeOllamaModelId,
 		actModeLmStudioModelId: config.actModeLmStudioModelId,
 		actModeLiteLlmModelId: config.actModeLiteLlmModelId,
 		actModeLiteLlmModelInfo: convertLiteLLMModelInfoToProto(config.actModeLiteLlmModelInfo),
@@ -621,9 +612,6 @@ export function convertProtoToApiConfiguration(protoConfig: ProtoApiConfiguratio
 		vertexRegion: protoConfig.vertexRegion,
 		openAiBaseUrl: protoConfig.openAiBaseUrl,
 		openAiApiKey: protoConfig.openAiApiKey,
-		ollamaBaseUrl: protoConfig.ollamaBaseUrl,
-		ollamaApiKey: protoConfig.ollamaApiKey,
-		ollamaApiOptionsCtxNum: protoConfig.ollamaApiOptionsCtxNum,
 		lmStudioBaseUrl: protoConfig.lmStudioBaseUrl,
 		lmStudioMaxTokens: protoConfig.lmStudioMaxTokens,
 		geminiApiKey: protoConfig.geminiApiKey,
@@ -695,7 +683,6 @@ export function convertProtoToApiConfiguration(protoConfig: ProtoApiConfiguratio
 		planModeDiracModelInfo: convertProtoToModelInfo(protoConfig.planModeDiracModelInfo),
 		planModeOpenAiModelId: protoConfig.planModeOpenAiModelId,
 		planModeOpenAiModelInfo: convertProtoToOpenAiCompatibleModelInfo(protoConfig.planModeOpenAiModelInfo),
-		planModeOllamaModelId: protoConfig.planModeOllamaModelId,
 		planModeLmStudioModelId: protoConfig.planModeLmStudioModelId,
 		planModeLiteLlmModelId: protoConfig.planModeLiteLlmModelId,
 		planModeLiteLlmModelInfo: convertProtoToLiteLLMModelInfo(protoConfig.planModeLiteLlmModelInfo),
@@ -737,7 +724,6 @@ export function convertProtoToApiConfiguration(protoConfig: ProtoApiConfiguratio
 		actModeDiracModelInfo: convertProtoToModelInfo(protoConfig.actModeDiracModelInfo),
 		actModeOpenAiModelId: protoConfig.actModeOpenAiModelId,
 		actModeOpenAiModelInfo: convertProtoToOpenAiCompatibleModelInfo(protoConfig.actModeOpenAiModelInfo),
-		actModeOllamaModelId: protoConfig.actModeOllamaModelId,
 		actModeLmStudioModelId: protoConfig.actModeLmStudioModelId,
 		actModeLiteLlmModelId: protoConfig.actModeLiteLlmModelId,
 		actModeLiteLlmModelInfo: convertProtoToLiteLLMModelInfo(protoConfig.actModeLiteLlmModelInfo),

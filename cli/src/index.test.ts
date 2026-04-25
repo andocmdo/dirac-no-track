@@ -419,7 +419,6 @@ describe("getProviderModelIdKey", () => {
 		openrouter: "OpenRouterModelId",
 		dirac: "OpenRouterModelId",
 		openai: "OpenAiModelId",
-		ollama: "OllamaModelId",
 		lmstudio: "LmStudioModelId",
 		litellm: "LiteLlmModelId",
 		requesty: "RequestyModelId",
@@ -456,9 +455,6 @@ describe("getProviderModelIdKey", () => {
 		expect(getProviderModelIdKey("openai", "act")).toBe("actModeOpenAiModelId")
 	})
 
-	it("should return correct key for ollama", () => {
-		expect(getProviderModelIdKey("ollama", "act")).toBe("actModeOllamaModelId")
-	})
 
 	it("should return null for anthropic (uses generic key)", () => {
 		expect(getProviderModelIdKey("anthropic", "act")).toBeNull()

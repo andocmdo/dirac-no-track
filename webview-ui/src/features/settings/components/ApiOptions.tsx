@@ -1,15 +1,12 @@
 import { Mode } from "@shared/ExtensionMessage"
-import { StringRequest } from "@shared/proto/dirac/common"
 import PROVIDERS from "@shared/providers/providers.json"
 import { VSCodeTextField } from "@vscode/webview-ui-toolkit/react"
 import Fuse from "fuse.js"
-import { KeyboardEvent, useCallback, useEffect, useMemo, useRef, useState } from "react"
-import { useInterval } from "react-use"
+import { KeyboardEvent, useEffect, useMemo, useRef, useState } from "react"
 import styled from "styled-components"
 import { PLATFORM_CONFIG, PlatformType } from "@/config/platform.config"
 import { normalizeApiConfiguration } from "@/features/settings/components/utils/providerUtils"
 import { useSettingsStore } from "@/features/settings/store/settingsStore"
-import { ModelsServiceClient } from "@/shared/api/grpc-client"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/shared/ui/tooltip"
 import { OPENROUTER_MODEL_PICKER_Z_INDEX } from "./OpenRouterModelPicker"
 import { AIhubmixProvider } from "./providers/AihubmixProvider"
@@ -36,7 +33,6 @@ import { MistralProvider } from "./providers/MistralProvider"
 import { MoonshotProvider } from "./providers/MoonshotProvider"
 import { NebiusProvider } from "./providers/NebiusProvider"
 import { NousResearchProvider } from "./providers/NousresearchProvider"
-import { OllamaProvider } from "./providers/OllamaProvider"
 import { OpenAICompatibleProvider } from "./providers/OpenAICompatible"
 import { OpenAINativeProvider } from "./providers/OpenAINative"
 import { OpenAiCodexProvider } from "./providers/OpenAiCodexProvider"
@@ -101,32 +97,8 @@ const ApiOptions = ({
 
 	const { handleModeFieldChange } = useApiConfigurationHandlers()
 
-	const [_ollamaModels, setOllamaModels] = useState<string[]>([])
 
-	// Poll ollama/vscode-lm models
-	const requestLocalModels = useCallback(async () => {
-		if (selectedProvider === "ollama") {
-			try {
-				const response = await ModelsServiceClient.getOllamaModels(
-					StringRequest.create({
-						value: apiConfiguration?.ollamaBaseUrl || "",
-					}),
-				)
-				if (response && response.values) {
-					setOllamaModels(response.values)
-				}
-			} catch (error) {
-				console.error("Failed to fetch Ollama models:", error)
-				setOllamaModels([])
-			}
-		}
-	}, [selectedProvider, apiConfiguration?.ollamaBaseUrl])
-	useEffect(() => {
-		if (selectedProvider === "ollama") {
-			requestLocalModels()
-		}
-	}, [selectedProvider, requestLocalModels])
-	useInterval(requestLocalModels, selectedProvider === "ollama" ? 2000 : null)
+	// Poll vscode-lm models
 
 	// Provider search state
 	const [searchTerm, setSearchTerm] = useState("")
@@ -460,9 +432,6 @@ const ApiOptions = ({
 				<LMStudioProvider currentMode={currentMode} isPopup={isPopup} showModelOptions={showModelOptions} />
 			)}
 
-			{apiConfiguration && selectedProvider === "ollama" && (
-				<OllamaProvider currentMode={currentMode} isPopup={isPopup} showModelOptions={showModelOptions} />
-			)}
 
 			{apiConfiguration && selectedProvider === "moonshot" && (
 				<MoonshotProvider currentMode={currentMode} isPopup={isPopup} showModelOptions={showModelOptions} />

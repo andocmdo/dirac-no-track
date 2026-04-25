@@ -116,10 +116,10 @@ export const mockProviderInfo = {
 }
 
 const makeProviderInfo = (modelId: string, providerId = "test") => ({
-	providerId: modelId.includes("ollama") ? "ollama" : providerId,
+	providerId,
 	model: { ...mockProviderInfo.model, id: modelId },
 	mode: "act" as const,
-	customPrompt: providerId.includes("lmstudio") || providerId.includes("ollama") ? "compact" : undefined,
+	customPrompt: providerId.includes("lmstudio") ? "compact" : undefined,
 })
 
 const baseContext: SystemPromptContext = {

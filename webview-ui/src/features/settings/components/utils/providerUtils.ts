@@ -82,7 +82,7 @@ export function supportsReasoningEffortForModelId(modelId?: string, modelInfo?: 
 
 /**
  * Returns the static model list for a provider.
- * For providers with dynamic models (openrouter, dirac, ollama, etc.), returns undefined.
+ * For providers with dynamic models (openrouter, dirac, etc.), returns undefined.
  * Some providers depend on configuration (qwen, zai) for region-specific models.
  */
 export function getModelsForProvider(
@@ -153,7 +153,6 @@ export function getModelsForProvider(
 		case "openrouter":
 		case "dirac":
 		case "openai":
-		case "ollama":
 		case "lmstudio":
 		case "vscode-lm":
 		case "requesty":
@@ -312,17 +311,6 @@ export function normalizeApiConfiguration(
 				selectedProvider: provider,
 				selectedModelId: hicapModelId || "",
 				selectedModelInfo: hicapModelInfoSaneDefaults,
-			}
-		case "ollama":
-			const ollamaModelId =
-				currentMode === "plan" ? apiConfiguration?.planModeOllamaModelId : apiConfiguration?.actModeOllamaModelId
-			return {
-				selectedProvider: provider,
-				selectedModelId: ollamaModelId || "",
-				selectedModelInfo: {
-					...openAiModelInfoSaneDefaults,
-					contextWindow: Number(apiConfiguration?.ollamaApiOptionsCtxNum ?? 32768),
-				},
 			}
 		case "lmstudio":
 			const lmStudioModelId =
@@ -519,7 +507,6 @@ export function getModeSpecificFields(apiConfiguration: ApiConfiguration | undef
 			togetherModelId: undefined,
 			fireworksModelId: undefined,
 			lmStudioModelId: undefined,
-			ollamaModelId: undefined,
 			liteLlmModelId: undefined,
 			requestyModelId: undefined,
 			openAiModelId: undefined,
@@ -580,7 +567,6 @@ export function getModeSpecificFields(apiConfiguration: ApiConfiguration | undef
 		togetherModelId: mode === "plan" ? apiConfiguration.planModeTogetherModelId : apiConfiguration.actModeTogetherModelId,
 		fireworksModelId: mode === "plan" ? apiConfiguration.planModeFireworksModelId : apiConfiguration.actModeFireworksModelId,
 		lmStudioModelId: mode === "plan" ? apiConfiguration.planModeLmStudioModelId : apiConfiguration.actModeLmStudioModelId,
-		ollamaModelId: mode === "plan" ? apiConfiguration.planModeOllamaModelId : apiConfiguration.actModeOllamaModelId,
 		liteLlmModelId: mode === "plan" ? apiConfiguration.planModeLiteLlmModelId : apiConfiguration.actModeLiteLlmModelId,
 		requestyModelId: mode === "plan" ? apiConfiguration.planModeRequestyModelId : apiConfiguration.actModeRequestyModelId,
 		openAiModelId: mode === "plan" ? apiConfiguration.planModeOpenAiModelId : apiConfiguration.actModeOpenAiModelId,
@@ -705,10 +691,6 @@ export async function syncModeConfigurations(
 			updates.actModeOpenAiModelInfo = sourceFields.openAiModelInfo
 			break
 
-		case "ollama":
-			updates.planModeOllamaModelId = sourceFields.ollamaModelId
-			updates.actModeOllamaModelId = sourceFields.ollamaModelId
-			break
 
 		case "lmstudio":
 			updates.planModeLmStudioModelId = sourceFields.lmStudioModelId
@@ -856,13 +838,6 @@ export const getProviderInfo = (
 					effectiveMode === "plan" ? apiConfiguration.planModeLmStudioModelId : apiConfiguration.actModeLmStudioModelId,
 				baseUrl: apiConfiguration.lmStudioBaseUrl,
 				helpText: "Start LM Studio and load a model to begin",
-			}
-		case "ollama":
-			return {
-				modelId:
-					effectiveMode === "plan" ? apiConfiguration.planModeOllamaModelId : apiConfiguration.actModeOllamaModelId,
-				baseUrl: apiConfiguration.ollamaBaseUrl,
-				helpText: "Run `ollama serve` and pull a model",
 			}
 		case "litellm":
 			return {

@@ -1001,7 +1001,6 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 				vsCodeLmModelSelector,
 				togetherModelId,
 				lmStudioModelId,
-				ollamaModelId,
 				liteLlmModelId,
 				requestyModelId,
 				vercelAiGatewayModelId,
@@ -1022,8 +1021,6 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 					return `${selectedProvider}:${togetherModelId}`
 				case "lmstudio":
 					return `${selectedProvider}:${lmStudioModelId}`
-				case "ollama":
-					return `${selectedProvider}:${ollamaModelId}`
 				case "litellm":
 					return `${selectedProvider}:${liteLlmModelId}`
 				case "requesty":

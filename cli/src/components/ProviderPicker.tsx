@@ -97,8 +97,6 @@ function isProviderConfigured(providerId: string, config: ApiConfiguration): boo
 				config.planModeOpenAiModelId ||
 				config.actModeOpenAiModelId
 			)
-		case "ollama":
-			return !!(config.ollamaBaseUrl || config.planModeOllamaModelId || config.actModeOllamaModelId)
 		case "lmstudio":
 			return !!(config.lmStudioBaseUrl || config.planModeLmStudioModelId || config.actModeLmStudioModelId)
 		case "litellm":

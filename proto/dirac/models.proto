@@ -11,8 +11,6 @@ option java_package = "bot.dirac.proto";
 
 // Service for model-related operations
 service ModelsService {
-  // Fetches available models from Ollama
-  rpc getOllamaModels(StringRequest) returns (StringArray);
   // Fetches available models from LM Studio
   rpc getLmStudioModels(StringRequest) returns (StringArray);
   // Fetches available models from VS Code LM API
@@ -158,7 +156,6 @@ message ModelsApiSecrets {
   optional string aws_session_token = 7;
   optional string aws_bedrock_api_key = 8;
   optional string open_ai_api_key = 9;
-  optional string ollama_api_key = 10;
   optional string gemini_api_key = 11;
   optional string open_ai_native_api_key = 12;
   optional string deep_seek_api_key = 13;
@@ -207,8 +204,6 @@ message ModelsApiOptions {
   optional string vertex_project_id = 14;
   optional string vertex_region = 15;
   optional string open_ai_base_url = 16;
-  optional string ollama_base_url = 17;
-  optional string ollama_api_options_ctx_num = 18;
   optional string lm_studio_base_url = 19;
   optional string gemini_base_url = 20;
   optional string requesty_base_url = 21;
@@ -246,7 +241,6 @@ message ModelsApiOptions {
   optional OpenRouterModelInfo plan_mode_open_router_model_info = 108;
   optional string plan_mode_open_ai_model_id = 109;
   optional OpenAiCompatibleModelInfo plan_mode_open_ai_model_info = 110;
-  optional string plan_mode_ollama_model_id = 111;
   optional string plan_mode_lm_studio_model_id = 112;
   optional string plan_mode_lite_llm_model_id = 113;
   optional LiteLLMModelInfo plan_mode_lite_llm_model_info = 114;
@@ -283,7 +277,6 @@ message ModelsApiOptions {
   optional OpenRouterModelInfo act_mode_open_router_model_info = 208;
   optional string act_mode_open_ai_model_id = 209;
   optional OpenAiCompatibleModelInfo act_mode_open_ai_model_info = 210;
-  optional string act_mode_ollama_model_id = 211;
   optional string act_mode_lm_studio_model_id = 212;
   optional string act_mode_lite_llm_model_id = 213;
   optional LiteLLMModelInfo act_mode_lite_llm_model_info = 214;
@@ -406,7 +399,6 @@ enum ApiProvider {
   BEDROCK = 2;
   VERTEX = 3;
   OPENAI = 4;
-  OLLAMA = 5;
   LMSTUDIO = 6;
   GEMINI = 7;
   OPENAI_NATIVE = 8;
@@ -519,8 +511,6 @@ message ModelsApiConfiguration {
   optional string vertex_region = 22;
   optional string open_ai_base_url = 23;
   optional string open_ai_api_key = 24;
-  optional string ollama_base_url = 25;
-  optional string ollama_api_options_ctx_num = 26;
   optional string lm_studio_base_url = 27;
   optional string gemini_api_key = 28;
   optional string gemini_base_url = 29;
@@ -558,7 +548,6 @@ message ModelsApiConfiguration {
   optional string hugging_face_api_key = 62;
   optional string huawei_cloud_maas_api_key = 63;
   optional string baseten_api_key = 64;
-  optional string ollama_api_key = 65;
   optional string zai_api_key = 66;
   optional string zai_api_line = 67;
   optional string lm_studio_max_tokens = 68;
@@ -590,7 +579,6 @@ message ModelsApiConfiguration {
   optional OpenRouterModelInfo plan_mode_open_router_model_info = 108;
   optional string plan_mode_open_ai_model_id = 109;
   optional OpenAiCompatibleModelInfo plan_mode_open_ai_model_info = 110;
-  optional string plan_mode_ollama_model_id = 111;
   optional string plan_mode_lm_studio_model_id = 112;
   optional string plan_mode_lite_llm_model_id = 113;
   optional LiteLLMModelInfo plan_mode_lite_llm_model_info = 114;
@@ -631,7 +619,6 @@ message ModelsApiConfiguration {
   optional OpenRouterModelInfo act_mode_open_router_model_info = 208;
   optional string act_mode_open_ai_model_id = 209;
   optional OpenAiCompatibleModelInfo act_mode_open_ai_model_info = 210;
-  optional string act_mode_ollama_model_id = 211;
   optional string act_mode_lm_studio_model_id = 212;
   optional string act_mode_lite_llm_model_id = 213;
   optional LiteLLMModelInfo act_mode_lite_llm_model_info = 214;

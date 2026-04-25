@@ -130,7 +130,6 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
 			modeFields.openAiModelInfo?.inputPrice &&
 			modeFields.openAiModelInfo?.outputPrice) ||
 		(modeFields.apiProvider !== "vscode-lm" &&
-			modeFields.apiProvider !== "ollama" &&
 			modeFields.apiProvider !== "lmstudio" &&
 			modeFields.apiProvider !== "openai-codex") // Subscription-based, no per-token costs
 

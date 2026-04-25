@@ -8,7 +8,6 @@ export type ApiProvider =
 	| "bedrock"
 	| "vertex"
 	| "openai"
-	| "ollama"
 	| "lmstudio"
 	| "gemini"
 	| "openai-native"
@@ -52,7 +51,6 @@ export const ALL_PROVIDERS: ApiProvider[] = [
 	"bedrock",
 	"vertex",
 	"openai",
-	"ollama",
 	"lmstudio",
 	"gemini",
 	"openai-native",

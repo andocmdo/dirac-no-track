@@ -162,7 +162,6 @@ export function extractProviderFromFieldName(fieldName) {
 		{ pattern: "openai", providerId: "openai" },
 		{ pattern: "gemini", providerId: "gemini" },
 		{ pattern: "deepseek", providerId: "deepseek" },
-		{ pattern: "ollama", providerId: "ollama" },
 		{ pattern: "lmstudio", providerId: "lmstudio" },
 		{ pattern: "litellm", providerId: "litellm" },
 		{ pattern: "qwen", providerId: "qwen" },
@@ -301,7 +300,6 @@ export function generateApiKeyDisplayName(fieldName) {
 		openAiApiKey: "OpenAI API Key",
 		openAiNativeApiKey: "OpenAI Native API Key",
 		geminiApiKey: "Gemini API Key",
-		ollamaApiKey: "Ollama API Key",
 		deepSeekApiKey: "DeepSeek API Key",
 		liteLlmApiKey: "LiteLLM API Key",
 		qwenApiKey: "Qwen API Key",
@@ -356,7 +354,7 @@ export function validateApiKeyMappings(providerIds, providerApiKeyMap) {
 	for (const providerId of providerIds) {
 		if (!providerApiKeyMap[providerId] || providerApiKeyMap[providerId].length === 0) {
 			// Some providers don't require API keys - they use alternative authentication:
-			const noKeyProviders = ["vscode-lm", "ollama", "lmstudio", "claude-code", "oca", "vertex", "qwen-code"]
+			const noKeyProviders = ["vscode-lm", "lmstudio", "claude-code", "oca", "vertex", "qwen-code"]
 
 			if (!noKeyProviders.includes(providerId)) {
 				unmappedProviders.push(providerId)

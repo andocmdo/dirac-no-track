@@ -19,7 +19,6 @@ settings/
 │   ├── BedrockProvider.tsx     # AWS Bedrock configuration
 │   ├── GeminiProvider.tsx      # Google Gemini configuration
 │   ├── MistralProvider.tsx     # Mistral configuration
-│   ├── OllamaProvider.tsx      # Ollama configuration
 │   ├── OpenAICompatibleProvider.tsx  # OpenAI compatible API configuration
 │   ├── OpenRouterProvider.tsx  # OpenRouter configuration
 │   └── ...

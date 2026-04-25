@@ -67,7 +67,6 @@ message Secrets {
   optional string open_ai_api_key = 8;
   optional string gemini_api_key = 9;
   optional string open_ai_native_api_key = 10;
-  optional string ollama_api_key = 11;
   optional string deep_seek_api_key = 12;
   optional string requesty_api_key = 13;
   optional string together_api_key = 14;
@@ -121,8 +120,6 @@ message Settings {
   optional string vertex_project_id = 15;
   optional string vertex_region = 16;
   optional string open_ai_base_url = 17;
-  optional string ollama_base_url = 18;
-  optional string ollama_api_options_ctx_num = 19;
   optional string lm_studio_base_url = 20;
   optional string lm_studio_max_tokens = 21;
   optional string gemini_base_url = 22;
@@ -155,7 +152,6 @@ message Settings {
   optional OpenRouterModelInfo plan_mode_open_router_model_info = 53;
   optional string plan_mode_open_ai_model_id = 54;
   optional OpenAiCompatibleModelInfo plan_mode_open_ai_model_info = 55;
-  optional string plan_mode_ollama_model_id = 56;
   optional string plan_mode_lm_studio_model_id = 57;
   optional string plan_mode_lite_llm_model_id = 58;
   optional LiteLLMModelInfo plan_mode_lite_llm_model_info = 59;
@@ -192,7 +188,6 @@ message Settings {
   optional OpenRouterModelInfo act_mode_open_router_model_info = 93;
   optional string act_mode_open_ai_model_id = 94;
   optional OpenAiCompatibleModelInfo act_mode_open_ai_model_info = 95;
-  optional string act_mode_ollama_model_id = 96;
   optional string act_mode_lm_studio_model_id = 97;
   optional string act_mode_lite_llm_model_id = 98;
   optional LiteLLMModelInfo act_mode_lite_llm_model_info = 99;

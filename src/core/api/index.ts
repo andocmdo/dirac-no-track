@@ -26,7 +26,6 @@ import { MistralHandler } from "./providers/mistral"
 import { MoonshotHandler } from "./providers/moonshot"
 import { NebiusHandler } from "./providers/nebius"
 import { NousResearchHandler } from "./providers/nousresearch"
-import { OllamaHandler } from "./providers/ollama"
 import { OpenAiHandler } from "./providers/openai"
 import { OpenAiCodexHandler } from "./providers/openai-codex"
 import { OpenAiNativeHandler } from "./providers/openai-native"
@@ -167,15 +166,6 @@ function createHandlerForProvider(
 				reasoningEffort: mode === "plan" ? options.planModeReasoningEffort : options.actModeReasoningEffort,
 			})
 		}
-		case "ollama":
-			return new OllamaHandler({
-				onRetryAttempt: options.onRetryAttempt,
-				ollamaBaseUrl: options.ollamaBaseUrl,
-				ollamaApiKey: options.ollamaApiKey,
-				ollamaModelId: mode === "plan" ? options.planModeOllamaModelId : options.actModeOllamaModelId,
-				ollamaApiOptionsCtxNum: options.ollamaApiOptionsCtxNum,
-				requestTimeoutMs: options.requestTimeoutMs,
-			})
 		case "lmstudio":
 			return new LmStudioHandler({
 				onRetryAttempt: options.onRetryAttempt,

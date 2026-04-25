@@ -49,7 +49,6 @@ export class DiracError extends Error {
 
 	// Error details per providers:
 	// Dirac: error?.error
-	// Ollama: error?.cause
 	// tbc
 	constructor(
 		raw: any,

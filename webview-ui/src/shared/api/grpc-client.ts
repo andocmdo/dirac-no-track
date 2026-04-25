@@ -138,9 +138,6 @@ export class FileServiceClient extends ProtoBusClient {
 }
 export class ModelsServiceClient extends ProtoBusClient {
 	static override serviceName: string = "dirac.ModelsService"
-    static async getOllamaModels(request: proto.dirac.StringRequest): Promise<proto.dirac.StringArray> {
-		return this.makeUnaryRequest("getOllamaModels", request, proto.dirac.StringRequest.toJSON, proto.dirac.StringArray.fromJSON)
-	}
     static async getLmStudioModels(request: proto.dirac.StringRequest): Promise<proto.dirac.StringArray> {
 		return this.makeUnaryRequest("getLmStudioModels", request, proto.dirac.StringRequest.toJSON, proto.dirac.StringArray.fromJSON)
 	}

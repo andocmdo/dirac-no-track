@@ -195,10 +195,6 @@ export function getConfiguredProviders(
 		configured.push("openai")
 	}
 
-	// Ollama - local provider, check base URL OR model configured
-	if (apiConfiguration.ollamaBaseUrl || apiConfiguration.planModeOllamaModelId || apiConfiguration.actModeOllamaModelId) {
-		configured.push("ollama")
-	}
 
 	// LM Studio - local provider, check base URL OR model configured
 	if (apiConfiguration.lmStudioBaseUrl || apiConfiguration.planModeLmStudioModelId || apiConfiguration.actModeLmStudioModelId) {
