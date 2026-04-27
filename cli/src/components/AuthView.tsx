@@ -11,6 +11,7 @@ import { openAiCodexOAuthManager } from "@/integrations/openai-codex/oauth"
 import { openAiCodexDefaultModelId } from "@/shared/api"
 import { getRandomQuote } from "@/shared/quotes"
 import { openExternal } from "@/utils/env"
+import { copyToClipboardNative, terminalLink } from "../utils/clipboard"
 import { COLORS } from "../constants/colors"
 import { useStdinContext } from "../context/StdinContext"
 import { useScrollableList } from "../hooks/useScrollableList"
@@ -158,6 +159,7 @@ export const AuthView: React.FC<AuthViewProps> = ({ controller, onComplete, onEr
 	const [modelId, setModelId] = useState("")
 	const [baseUrl, setBaseUrl] = useState("")
 	const [errorMessage, setErrorMessage] = useState("")
+	const [copied, setCopied] = useState(false)
 	const [codexAuthUrl, setCodexAuthUrl] = useState<string | null>(null)
 	const [providerSearch, setProviderSearch] = useState("")
 	const [providerIndex, setProviderIndex] = useState(0)
@@ -637,10 +639,22 @@ export const AuthView: React.FC<AuthViewProps> = ({ controller, onComplete, onEr
 						<Text color="gray">Sign in with your ChatGPT account in the browser.</Text>
 						{codexAuthUrl && (
 							<Box flexDirection="column" marginTop={1}>
-								<Text color="gray">If the browser didn't open, use this URL:</Text>
-								<Text color="cyan" wrap="wrap">
-									{codexAuthUrl}
-								</Text>
+								<Text color="gray">If the browser didn't open, use this link:</Text>
+								<Box marginTop={1}>
+									<Text bold color="cyan">
+										{terminalLink("👉 Click here to sign in with ChatGPT", codexAuthUrl)}
+									</Text>
+								</Box>
+
+
+								<Box marginTop={1}>
+									{copied ? (
+										<Text color="green">✔ Copied to clipboard!</Text>
+									) : (
+										<Text color="gray">(Press 'c' to copy the full URL)</Text>
+									)}
+								</Box>
+
 								<Box marginTop={1}>
 									<Text color="yellow">
 										Note: If you are on a remote machine, you may need to set up SSH port forwarding:
@@ -726,10 +740,22 @@ export const AuthView: React.FC<AuthViewProps> = ({ controller, onComplete, onEr
 	// Steps that allow going back with escape (apikey handled by ApiKeyInput component)
 	// OcaEmployeeCheck handles its own escape key, so oca_employee_check is not in this list
 	const canGoBack = ["provider", "modelid", "baseurl", "openai_codex_auth", "bedrock", "error"].includes(step)
+	const isAuthStep = step === "openai_codex_auth" || step === "github_copilot_auth"
 
 	useInput(
 		(input, key) => {
 			// Handle escape to go back (except on menu)
+			// Handle 'c' to copy URL in OpenAI Codex auth step
+			if (step === "openai_codex_auth" && input === "c" && codexAuthUrl) {
+				const ok = copyToClipboardNative(codexAuthUrl)
+				if (ok) {
+					setCopied(true)
+					setTimeout(() => setCopied(false), 2000)
+				}
+				return
+			}
+
+
 			if (key.escape && canGoBack) {
 				goBack()
 				return
@@ -777,13 +803,12 @@ export const AuthView: React.FC<AuthViewProps> = ({ controller, onComplete, onEr
 
 			{/* Auth box with border */}
 			<Box
-				borderColor="gray"
-				borderStyle="round"
+				{...(isAuthStep ? {} : { borderStyle: "round", borderColor: "gray" })}
 				flexDirection="column"
 				marginTop={1}
 				paddingBottom={1}
-				paddingLeft={2}
-				paddingRight={2}
+				paddingLeft={isAuthStep ? 3 : 2}
+				paddingRight={isAuthStep ? 3 : 2}
 				paddingTop={1}>
 				{step === "menu" ? (
 					<Box flexDirection="column">

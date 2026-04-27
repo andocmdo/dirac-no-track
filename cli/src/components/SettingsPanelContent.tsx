@@ -19,6 +19,7 @@ import { Logger } from "@/shared/services/Logger"
 import { openAiCodexOAuthManager } from "@/integrations/openai-codex/oauth"
 import { githubCopilotAuthManager } from "@/integrations/github-copilot/auth"
 import { openExternal } from "@/utils/env"
+import { copyToClipboardNative, terminalLink } from "../utils/clipboard"
 import { supportsReasoningEffortForModel } from "@/utils/model-utils"
 import { version as CLI_VERSION } from "../../package.json"
 import { COLORS } from "../constants/colors"
@@ -147,6 +148,7 @@ export const SettingsPanelContent: React.FC<SettingsPanelContentProps> = ({
 	const [githubIsAuthenticated, setGithubIsAuthenticated] = useState(false)
 	const [githubEmail, setGithubEmail] = useState<string | undefined>(undefined)
 	const [codexAuthUrl, setCodexAuthUrl] = useState<string | null>(null)
+	const [copied, setCopied] = useState(false)
 	const [codexAuthError, setCodexAuthError] = useState<string | null>(null)
 	const [openAiCodexIsAuthenticated, setOpenAiCodexIsAuthenticated] = useState(false)
 	const [openAiCodexEmail, setOpenAiCodexEmail] = useState<string | undefined>(undefined)
@@ -1143,6 +1145,14 @@ export const SettingsPanelContent: React.FC<SettingsPanelContentProps> = ({
 
 			// Codex OAuth waiting mode - escape to cancel
 			if (isWaitingForCodexAuth) {
+				if (input === "c" && codexAuthUrl) {
+					const ok = copyToClipboardNative(codexAuthUrl)
+					if (ok) {
+						setCopied(true)
+						setTimeout(() => setCopied(false), 2000)
+					}
+					return
+				}
 				if (key.escape) {
 					openAiCodexOAuthManager.cancelAuthorizationFlow()
 					setIsWaitingForCodexAuth(false)
@@ -1279,10 +1289,16 @@ export const SettingsPanelContent: React.FC<SettingsPanelContentProps> = ({
 					</Box>
 					{codexAuthUrl && (
 						<Box flexDirection="column" marginTop={1}>
-							<Text color="gray">If the browser didn't open, use this URL:</Text>
-							<Text color="cyan" wrap="wrap">
-								{codexAuthUrl}
+							<Text bold color="cyan">
+								{terminalLink("👉 Sign in to ChatGPT", codexAuthUrl)}
 							</Text>
+							<Box marginTop={1}>
+								{copied ? (
+									<Text color="green">✔ Copied to clipboard!</Text>
+								) : (
+									<Text color="gray">(press 'c' to copy URL)</Text>
+								)}
+							</Box>
 							<Box marginTop={1}>
 								<Text color="yellow">
 									Note: If you are on a remote machine, you may need to set up SSH port forwarding:

@@ -15,7 +15,7 @@ import React from "react"
 import { COLORS } from "../constants/colors"
 import { useTerminalSize } from "../hooks/useTerminalSize"
 import { jsonParseSafe } from "../utils/parser"
-import { getToolDescription, isFileEditTool, parseToolFromMessage } from "../utils/tools"
+import { getToolDescription, getToolMainArg, isFileEditTool, parseToolFromMessage } from "../utils/tools"
 import { DiffView } from "./DiffView"
 import { SubagentMessage } from "./SubagentMessage"
 
@@ -232,46 +232,6 @@ const ResultRow: React.FC<{ children: React.ReactNode; isFirst?: boolean }> = ({
 )
 
 /**
- * Get the primary argument to display for a tool (file path, command, url, etc.)
- */
-function getToolMainArg(_toolName: string, args: Record<string, unknown>): string {
-	// Search files: show 'regex' in path
-	if (typeof args.regex === "string" && typeof args.path === "string") {
-		return `'${args.regex}' in ${args.path}`
-	}
-
-	// File path
-	if (typeof args.path === "string") return args.path
-	if (typeof args.file_path === "string") return args.file_path
-
-	// Multiple paths
-	if (Array.isArray(args.paths) && args.paths.length > 0) {
-		const paths = args.paths.filter((p): p is string => typeof p === "string")
-		if (paths.length > 0) {
-			return paths.length > 2 ? `${paths[0]}, ${paths[1]} and ${paths.length - 2} more` : paths.join(", ")
-		}
-	}
-
-	// Command - truncate long commands
-	if (typeof args.command === "string") {
-		return args.command.length > 120 ? args.command.substring(0, 117) + "..." : args.command
-	}
-
-	// URL
-	if (typeof args.url === "string") return args.url
-
-	// Search query
-	if (typeof args.query === "string") return args.query
-
-	// Rename symbol
-	if (typeof args.existing_symbol === "string" && typeof args.new_symbol === "string") {
-		return `'${args.existing_symbol}' to '${args.new_symbol}'`
-	}
-
-	return ""
-}
-
-/**
  * Render a tool call in webview style: "Dirac wants to read this file:" / "Dirac read this file:"
  */
 const ToolCallText: React.FC<{
@@ -373,17 +333,48 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message, mode, isStrea
 			const filePath = toolInfo.args.path || toolInfo.args.file_path
 
 			// File edit tools - show diff
-			if (isFileEditTool(toolInfo.toolName) && filePath && toolInfo.args.content) {
-				return (
-					<Box flexDirection="column" marginBottom={1} width="100%">
-						<DotRow color={toolColor} flashing={partial === true && isStreaming}>
-							<ToolCallText args={toolInfo.args} isAsk={isToolAsk} mode={mode} toolName={toolInfo.toolName} />
-						</DotRow>
-						<Box marginLeft={2}>
-							<DiffView content={toolInfo.args.content as string} filePath={filePath as string | undefined} />
+			if (isFileEditTool(toolInfo.toolName) && filePath) {
+				const editSummaries = toolInfo.args.editSummaries as any[] | undefined
+				const replacements = toolInfo.args.replacements as any[] | undefined
+
+				if (editSummaries && Array.isArray(editSummaries) && editSummaries.length > 0) {
+					return (
+						<Box flexDirection="column" marginBottom={1} width="100%">
+							<DotRow color={toolColor} flashing={partial === true && isStreaming}>
+								<ToolCallText args={toolInfo.args} isAsk={isToolAsk} mode={mode} toolName={toolInfo.toolName} />
+							</DotRow>
+							{editSummaries.map((summary, idx) => (
+								<Box flexDirection="column" key={idx} marginLeft={2} marginTop={idx > 0 ? 1 : 0}>
+									<ResultRow isFirst={true}>
+										<Text bold color={toolColor}>
+											{summary.path}
+										</Text>
+									</ResultRow>
+									{summary.diff && (
+										<Box marginLeft={3}>
+											<DiffView content={summary.diff} filePath={summary.path} />
+										</Box>
+									)}
+								</Box>
+							))}
 						</Box>
-					</Box>
-				)
+					)
+				}
+
+
+				const diffContent = toolInfo.args.content as string
+				if (diffContent) {
+					return (
+						<Box flexDirection="column" marginBottom={1} width="100%">
+							<DotRow color={toolColor} flashing={partial === true && isStreaming}>
+								<ToolCallText args={toolInfo.args} isAsk={isToolAsk} mode={mode} toolName={toolInfo.toolName} />
+							</DotRow>
+							<Box marginLeft={2}>
+								<DiffView content={diffContent} filePath={filePath as string | undefined} />
+							</Box>
+						</Box>
+					)
+				}
 			}
 
 			// Show result content for completed tools (both say and ask), or file path for pending asks

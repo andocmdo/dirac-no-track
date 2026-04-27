@@ -357,6 +357,7 @@ export class BatchProcessor {
                         deletions: ae.linesDeleted,
                     })) || [],
                 diagnostics: b.diagnostics,
+                diff: b.prepared?.diff,
             })),
         )
 

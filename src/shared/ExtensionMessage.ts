@@ -279,6 +279,7 @@ export interface DiracSayTool {
 
 	editSummaries?: Array<{
 		path: string
+		diff?: string
 		edits: Array<{ additions: number; deletions: number }>
 		diagnostics?: { fixedCount: number; newProblemsMessage?: string }
 	}>

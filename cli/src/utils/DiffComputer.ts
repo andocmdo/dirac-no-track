@@ -34,11 +34,12 @@ export interface ComputedDiff {
 
 // Format markers
 const MARKERS = {
-	SEARCH_BLOCK: "------- SEARCH",
+	SEARCH_BLOCK: "<<<<<<< SEARCH",
 	SEARCH_SEPARATOR: "=======",
-	REPLACE_BLOCK: "+++++++ REPLACE",
+	REPLACE_BLOCK: ">>>>>>> REPLACE",
 	NEW_BEGIN: "*** Begin Patch",
 	NEW_END: "*** End Patch",
+	FILE_PATTERN: /^\*\*\* (Add|Update|Delete) File: (.+)$/m,
 } as const
 
 /**
@@ -48,7 +49,7 @@ function parseSearchReplacePairs(content: string): Array<{ search: string; repla
 	const pairs: Array<{ search: string; replace: string }> = []
 
 	// Find all SEARCH blocks
-	const searchRegex = /-{7,} SEARCH/g
+	const searchRegex = /(?:-{7,}|<{7,}) SEARCH/g
 	const searchPositions: number[] = []
 	let match: RegExpExecArray | null
 	while ((match = searchRegex.exec(content)) !== null) {
@@ -61,7 +62,9 @@ function parseSearchReplacePairs(content: string): Array<{ search: string; repla
 		const blockContent = content.substring(start, end)
 
 		// Extract content after SEARCH marker
-		const afterSearch = blockContent.substring(MARKERS.SEARCH_BLOCK.length).replace(/^\r?\n/, "")
+		const searchMarkerMatch = blockContent.match(searchRegex)
+		const searchMarkerLength = searchMarkerMatch ? searchMarkerMatch[0].length : MARKERS.SEARCH_BLOCK.length
+		const afterSearch = blockContent.substring(searchMarkerLength).replace(/^\r?\n/, "")
 		const separatorIndex = afterSearch.indexOf(MARKERS.SEARCH_SEPARATOR)
 
 		if (separatorIndex === -1) {
@@ -74,7 +77,10 @@ function parseSearchReplacePairs(content: string): Array<{ search: string; repla
 
 			// Extract REPLACE block
 			const afterSeparator = afterSearch.substring(separatorIndex + MARKERS.SEARCH_SEPARATOR.length).replace(/^\r?\n/, "")
-			const replaceEndIndex = afterSeparator.indexOf(MARKERS.REPLACE_BLOCK)
+			let replaceEndIndex = afterSeparator.indexOf(MARKERS.REPLACE_BLOCK)
+			if (replaceEndIndex === -1) {
+				replaceEndIndex = afterSeparator.indexOf("+++++++ REPLACE")
+			}
 			const replaceContent =
 				replaceEndIndex !== -1
 					? afterSeparator.substring(0, replaceEndIndex).replace(/\r?\n$/, "")
@@ -195,14 +201,72 @@ function computeLineDiff(search: string, replace: string): DiffBlock {
 /**
  * Compute diff from tool content (SEARCH/REPLACE or ApplyPatch format)
  */
+/**
+ * Parse new format patches (*** Add/Update/Delete File: path)
+ */
+function parseNewFormat(content: string): Array<{ search: string; replace: string }> {
+	const pairs: Array<{ search: string; replace: string }> = []
+	const lines = content.split("\n")
+
+	let searchLines: string[] = []
+	let replaceLines: string[] = []
+
+	for (const line of lines) {
+		if (line.match(MARKERS.FILE_PATTERN)) {
+			if (searchLines.length > 0 || replaceLines.length > 0) {
+				pairs.push({
+					search: searchLines.join("\n"),
+					replace: replaceLines.join("\n"),
+				})
+				searchLines = []
+				replaceLines = []
+			}
+			continue
+		}
+		if (line.trim() === "@@") {
+			if (searchLines.length > 0 || replaceLines.length > 0) {
+				pairs.push({
+					search: searchLines.join("\n"),
+					replace: replaceLines.join("\n"),
+				})
+				searchLines = []
+				replaceLines = []
+			}
+			continue
+		}
+
+		if (line.startsWith("+")) {
+			const hasSpace = line.startsWith("+ ")
+			replaceLines.push(hasSpace ? line.slice(2) : line.slice(1))
+		} else if (line.startsWith("-")) {
+			const hasSpace = line.startsWith("- ")
+			searchLines.push(hasSpace ? line.slice(2) : line.slice(1))
+		} else if (line.trim()) {
+			searchLines.push(line.startsWith(" ") ? line.slice(1) : line)
+			replaceLines.push(line.startsWith(" ") ? line.slice(1) : line)
+		}
+	}
+
+	if (searchLines.length > 0 || replaceLines.length > 0) {
+		pairs.push({
+			search: searchLines.join("\n"),
+			replace: replaceLines.join("\n"),
+		})
+	}
+
+	return pairs
+}
+
 export function computeDiff(content: string): ComputedDiff {
 	// Detect format and parse pairs
 	let pairs: Array<{ search: string; replace: string }>
 
-	if (content.includes(MARKERS.SEARCH_BLOCK)) {
+	if (content.includes(MARKERS.SEARCH_BLOCK) || content.includes("------- SEARCH")) {
 		pairs = parseSearchReplacePairs(content)
 	} else if (content.includes(MARKERS.NEW_BEGIN)) {
 		pairs = parseApplyPatchPairs(content)
+	} else if (content.match(MARKERS.FILE_PATTERN)) {
+		pairs = parseNewFormat(content)
 	} else {
 		// Fallback: treat as new file (all additions)
 		const lines = content.split("\n")
