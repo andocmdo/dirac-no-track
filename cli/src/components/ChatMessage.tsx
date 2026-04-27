@@ -244,6 +244,14 @@ function getToolMainArg(_toolName: string, args: Record<string, unknown>): strin
 	if (typeof args.path === "string") return args.path
 	if (typeof args.file_path === "string") return args.file_path
 
+	// Multiple paths
+	if (Array.isArray(args.paths) && args.paths.length > 0) {
+		const paths = args.paths.filter((p): p is string => typeof p === "string")
+		if (paths.length > 0) {
+			return paths.length > 2 ? `${paths[0]}, ${paths[1]} and ${paths.length - 2} more` : paths.join(", ")
+		}
+	}
+
 	// Command - truncate long commands
 	if (typeof args.command === "string") {
 		return args.command.length > 120 ? args.command.substring(0, 117) + "..." : args.command
@@ -254,6 +262,11 @@ function getToolMainArg(_toolName: string, args: Record<string, unknown>): strin
 
 	// Search query
 	if (typeof args.query === "string") return args.query
+
+	// Rename symbol
+	if (typeof args.existing_symbol === "string" && typeof args.new_symbol === "string") {
+		return `'${args.existing_symbol}' to '${args.new_symbol}'`
+	}
 
 	return ""
 }

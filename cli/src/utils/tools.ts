@@ -7,19 +7,41 @@
  * Tools that perform file edits (create, modify, delete)
  * Used to determine when to show DiffView and skip dynamic rendering
  */
-export const FILE_EDIT_TOOLS = new Set(["edit_file", "replace_symbol", "write_to_file"])
+export const FILE_EDIT_TOOLS = new Set([
+	"edit_file",
+	"replace_symbol",
+	"write_to_file",
+	"new_rule",
+	"rename_symbol",
+	"edited_existing_file",
+	"new_file_created",
+	"editedExistingFile",
+	"newFileCreated",
+	"renameSymbol",
+])
 
 /**
  * Tools that save/modify files (subset used for "Save" button label)
  */
-export const FILE_SAVE_TOOLS = new Set(["edit_file", "replace_symbol", "write_to_file"])
+export const FILE_SAVE_TOOLS = new Set([
+	"edit_file",
+	"replace_symbol",
+	"write_to_file",
+	"new_rule",
+	"rename_symbol",
+	"edited_existing_file",
+	"new_file_created",
+	"editedExistingFile",
+	"newFileCreated",
+	"renameSymbol",
+])
 
 /**
  * Check if a tool name is a file edit tool
  */
 export function isFileEditTool(toolName: string | undefined): boolean {
 	if (!toolName) return false
-	return FILE_EDIT_TOOLS.has(toolName)
+	return FILE_EDIT_TOOLS.has(toolName) || FILE_EDIT_TOOLS.has(normalizeToolName(toolName))
 }
 
 /**
@@ -27,7 +49,7 @@ export function isFileEditTool(toolName: string | undefined): boolean {
  */
 export function isFileSaveTool(toolName: string | undefined): boolean {
 	if (!toolName) return false
-	return FILE_SAVE_TOOLS.has(toolName)
+	return FILE_SAVE_TOOLS.has(toolName) || FILE_SAVE_TOOLS.has(normalizeToolName(toolName))
 }
 
 /**
@@ -46,18 +68,26 @@ export function normalizeToolName(toolName: string): string {
 export const TOOL_DESCRIPTIONS: Record<string, { ask: string; say: string }> = {
 	// File operations
 	read_file: { ask: "wants to read this file", say: "read this file" },
+	edited_existing_file: { ask: "wants to edit this file", say: "edited this file" },
+	new_file_created: { ask: "wants to create a new file", say: "created a new file" },
+	file_deleted: { ask: "wants to delete this file", say: "deleted this file" },
 	write_to_file: { ask: "wants to create a new file", say: "created a new file" },
 	edit_file: { ask: "wants to edit this file", say: "edited this file" },
 	replace_symbol: { ask: "wants to replace a symbol in this file", say: "replaced a symbol in this file" },
+	rename_symbol: { ask: "wants to rename a symbol", say: "renamed a symbol" },
 
 	// Directory operations
 	list_files: { ask: "wants to view files in this directory", say: "viewed files in this directory" },
+	list_files_top_level: { ask: "wants to view files in this directory", say: "viewed files in this directory" },
+	list_files_recursive: { ask: "wants to view all files in this directory recursively", say: "viewed all files in this directory recursively" },
+	list_code_definition_names: { ask: "wants to list code definitions in this directory", say: "listed code definitions in this directory" },
 	search_files: { ask: "wants to search files", say: "searched files" },
 
 	// Code Analysis
 	find_symbol_references: { ask: "wants to find references for symbols", say: "found references for symbols" },
 	get_function: { ask: "wants to extract function implementations", say: "extracted function implementations" },
 	get_file_skeleton: { ask: "wants to read the structure of these files", say: "read the structure of these files" },
+	diagnostics_scan: { ask: "wants to scan for diagnostics", say: "scanned for diagnostics" },
 
 	// Command execution
 	execute_command: { ask: "wants to execute this command", say: "executed this command" },
@@ -65,8 +95,10 @@ export const TOOL_DESCRIPTIONS: Record<string, { ask: string; say: string }> = {
 	// Browser & Web
 	browser_action: { ask: "wants to use the browser", say: "used the browser" },
 	web_fetch: { ask: "wants to fetch content from this URL", say: "fetched content from this URL" },
+	read_line_range: { ask: "wants to read a line range from this file", say: "read a line range from this file" },
 	web_search: { ask: "wants to search the web", say: "searched the web" },
 
+	browser_action_result: { ask: "wants to see the browser result", say: "viewed the browser result" },
 	// Agent Control
 	use_subagents: { ask: "wants to start subagents", say: "started subagents" },
 	use_skill: { ask: "wants to use a skill", say: "used a skill" },
@@ -77,6 +109,11 @@ export const TOOL_DESCRIPTIONS: Record<string, { ask: string; say: string }> = {
 	new_task: { ask: "wants to create a new task", say: "created a new task" },
 	plan_mode_respond: { ask: "wants to propose a plan", say: "proposed a plan" },
 	focus_chain: { ask: "wants to update the todo list", say: "updated the todo list" },
+	condense: { ask: "wants to condense the conversation", say: "condensed the conversation" },
+	summarize_task: { ask: "wants to summarize the task", say: "summarized the task" },
+	report_bug: { ask: "wants to report a bug", say: "reported a bug" },
+	new_rule: { ask: "wants to create a new rule", say: "created a new rule" },
+	subagent: { ask: "wants to use a subagent", say: "used a subagent" },
 }
 
 /**
